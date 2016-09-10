@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">魔影</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="account_hint">Telphone Number</string>
+    <string name="pwd_hint">Password 6-20</string>
+    <string name="movies">movies</string>
+    <string name="shouji_icon">telphone ico</string>
+    <string name="registe_text">New here?Sign Up</string>
+    <string name="forget_pwd_text">Forgot password?</string>
+    <string name="login_btn_text">Sign in</string>
+    <string name="registe_btn_text">Sign up</string>
+    <string name="send_msg">验证码电话已拨打至手机：</string>
+    <string name="verification_hint_text">Verification Code</string>
+    <string name="verification_btn_text">Next</string>
+    <string name="all_time">30s</string>
+    
+    
+    <string name="movie_name">名&#8194;字：</string>
+    <string name="movie_other_name">别&#8194;名：</string>
+    <string name="movie_actor">演&#8194;员：</string>
+    <string name="movie_type">类&#8194;型：</string>
+    <string name="movie_region">地&#8194;区：</string>
+    <string name="movie_language">语&#8194;言：</string>
+    <string name="movie_director">导&#8194;演：</string>
+    <string name="movie_release_date">上&#8194;映：</string>
+    <string name="movie_time">片&#8194;长：</string>
+    <string name="movie_db_grade">豆瓣评分：</string>
+    <string name="movie_introduce">剧情介绍：</string>
+    
+    
+
+    <item type="id" name="Click_Position"></item>
+    <item type="id" name="Click_Type"></item>
+</resources>

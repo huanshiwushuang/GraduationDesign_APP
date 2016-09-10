@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_bg"
+    android:gravity="center_horizontal" >
+
+    <ImageView
+        android:id="@+id/movies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="95dp"
+        android:contentDescription="@string/movies"
+        android:src="@drawable/movies" />
+	<TextView 
+	    android:id="@+id/id_textview_send_msg"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/movies"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="40dp"
+	    android:text="@string/send_msg"/>
+    <RelativeLayout
+        android:id="@+id/account_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_textview_send_msg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="13dp" >
+
+        <EditText
+            android:id="@+id/id_edittext_account"
+            android:layout_width="205dp"
+            android:layout_height="46dp"
+            android:background="@drawable/input_bg"
+            android:hint="@string/verification_hint_text"
+            android:paddingLeft="10dp"
+            android:textColorHint="#ffffff"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:maxLength="4" />
+
+        <Button
+            android:id="@+id/id_button_time"
+            android:layout_width="60dp"
+            android:layout_height="46dp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:background="#eacb20"
+            android:layout_toRightOf="@id/id_edittext_account"
+            android:contentDescription="@string/shouji_icon"
+            android:text="@string/all_time"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/id_button_verification"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/account_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/login_btn_bg"
+        android:text="@string/verification_btn_text"
+        android:textColor="#fff" />
+
+</RelativeLayout>

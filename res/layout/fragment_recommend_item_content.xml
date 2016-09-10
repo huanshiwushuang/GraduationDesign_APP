@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#c1ffff"
+    android:padding="7dp" >
+
+    <LinearLayout
+        android:id="@+id/id_linearlayout_movie00"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/id_imageview_img01"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/id_textview_text01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/id_linearlayout_movie01"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/id_imageview_img02"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/id_textview_text02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/id_linearlayout_movie02"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/id_imageview_img03"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/id_textview_text03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+</LinearLayout>

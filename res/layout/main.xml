@@ -1,0 +1,109 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.guohao.custom.Title
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F00" >
+    </com.guohao.custom.Title>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="#000000"
+        android:flipInterval="30"
+        android:persistentDrawingCache="animation" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha="0.4"
+            android:background="@drawable/line" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#f3f3f3"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/id_linearlayout_recommend"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/id_imageview_recommend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:src="@drawable/pic_tab_recommend_2" />
+
+                <TextView
+                    android:id="@+id/id_textview_recommend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="推荐"
+                    android:textColor="#087f78" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/id_linearlayout_all"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/id_imageview_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:src="@drawable/pic_tab_all" />
+
+                <TextView
+                    android:id="@+id/id_textview_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="导航"
+                    android:textColor="#c9bda6" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/id_linearlayout_my"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/id_imageview_my"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:src="@drawable/pic_tab_my" />
+
+                <TextView
+                    android:id="@+id/id_textview_my"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="我的"
+                    android:textColor="#c9bda6" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
