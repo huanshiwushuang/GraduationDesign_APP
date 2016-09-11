@@ -1,5 +1,7 @@
 package com.guohao.util;
 
+import io.vov.vitamio.MediaPlayer;
+
 public class Data {
 	public static final String URL_USER_TABLE = "http://80smovie.tk/user.gh";
 	public static final String URL_MOVIE_INFO_TABLE = "http://80smovie.tk/movieInfo.gh";
@@ -23,11 +25,7 @@ public class Data {
 	public static final String MOVIE_640P = "640P";
 	public static final String MOVIE_480P = "480P";
 	
-	//配置文件
-	//---加载大图还是小图
-	public static final String K_Pic_Loading = "0";
-	public static final int V_Pic_Loading_Big = 1;
-	public static final int V_Pic_Loading_Small = 2;
+	
 	
 	//---最后进入的时间
 	public static final String K_Time_Last_Into = "3";
@@ -41,5 +39,21 @@ public class Data {
 	//保存图片的宽度和高度
 	public static final String K_IMAGE_WIDTH = "image_width";
 	public static final String K_IMAGE_HEIGHT = "image_height";
+	
+	
+	
+	
+	
+	//----------------------------------------可以进行设置的-----------------------------------------------
+	//配置文件
+	//---加载大图还是小图
+	public static final String K_Pic_Loading = "0";
+	public static final int V_Pic_Loading_Big = 1;
+	public static final int V_Pic_Loading_Small = 2;
+	//视频播放质量的高度
+	public static final String K_Video_Quality = "video_quality";
+	public static final int V_Video_Quality_High = MediaPlayer.VIDEOQUALITY_HIGH;
+	public static final int V_Video_Quality_Medium = MediaPlayer.VIDEOQUALITY_MEDIUM;
+	public static final int V_Video_Quality_Low = MediaPlayer.VIDEOQUALITY_LOW;
 	
 }

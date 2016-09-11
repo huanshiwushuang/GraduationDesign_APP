@@ -174,16 +174,18 @@ public class MovieDetailActivity extends Activity {
 				t.setLayoutParams(params);
 				
 				String movieId = null;
+				String thisMovieName = null;
 				try {
 					JSONObject object = array.getJSONObject(i);
-					t.setText(object.getString("movieName"));
+					thisMovieName = object.getString("movieName");
+					t.setText(thisMovieName);
 					movieId = object.getString("movieId");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				String url = Data.URL_MOVIE_PLAY_URL;
 				url += "?tableName="+flag+"&movieId="+movieId;
-				t.setClickRequest(url);
+				t.setClickRequest(thisMovieName,url);
 				switch (flag) {
 				case Data.MOVIE_TV:
 					layoutTV.setVisibility(View.VISIBLE);

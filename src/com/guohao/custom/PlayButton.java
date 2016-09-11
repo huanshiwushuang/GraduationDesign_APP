@@ -20,12 +20,12 @@ public class PlayButton extends TextView {
 		super(context);
 	}
 	
-	public void setClickRequest(final String url) {
+	public void setClickRequest(final String movieName, final String url) {
 		this.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				MoviePlayActivity.actionStart(getContext(), url);
+				MoviePlayActivity.actionStart(getContext(), movieName, url);
 			}
 		});
 	}
