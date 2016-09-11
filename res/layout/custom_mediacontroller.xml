@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:background="#77000000" >
+        <TextView 
+            android:id="@+id/id_textview_flow"
+            android:layout_width="75dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="#fff"
+            android:layout_marginLeft="10dp"
+            android:text="102kb/s"/>
+
+        <TextView
+            android:id="@+id/mediacontroller_file_name "
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/id_textview_flow"
+            android:gravity="center_vertical"
+            android:text="file name"
+            android:textColor="#fff" />
+
+        <TextView
+            android:id="@+id/id_textview_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:text="20:35"
+            android:textColor="#fff" />
+
+        <ImageView
+            android:id="@+id/id_imageview_battery"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/id_textview_time"
+            android:src="@drawable/dianchi_6" />
+
+        <TextView
+            android:id="@+id/id_textview_battery"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/id_imageview_battery"
+            android:gravity="center_vertical"
+            android:text="100%"
+            android:textColor="#fff" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:background="#77000000" >
+
+        <ImageView
+            android:id="@+id/mediacontroller_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/mediacontroller_pause" />
+
+        <TextView
+            android:id="@+id/mediacontroller_time_current"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/mediacontroller_pause"
+            android:gravity="center_vertical"
+            android:text="0:34" />
+
+        <TextView
+            android:id="@+id/mediacontroller_time_total"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:text="1:20:12" />
+
+        <SeekBar
+            android:id="@+id/mediacontroller_progress"
+            style="@style/MediaController_SeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/mediacontroller_time_total"
+            android:layout_toRightOf="@id/mediacontroller_time_current"
+            android:focusable="true"
+            android:max="1000" />
+    </RelativeLayout>
+
+</RelativeLayout>
