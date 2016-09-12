@@ -172,6 +172,7 @@ public class MoviePlayActivity extends Activity{
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(batteryBroadcastReceiver);
-		
+		//销毁更新 SeekBar 的子线程
+		MyMediaController.IsDestroy = true;
 	}
 }

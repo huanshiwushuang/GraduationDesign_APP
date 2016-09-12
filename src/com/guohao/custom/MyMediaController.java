@@ -1,9 +1,10 @@
 package com.guohao.custom;
 
 import com.guohao.graduationdesign_app.R;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -15,13 +16,21 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
-public class MyMediaController extends MediaController implements OnClickListener,OnTouchListener,OnSeekBarChangeListener {
+@SuppressLint("ClickableViewAccessibility")
+public class MyMediaController extends MediaController implements OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnPreparedListener {
 	private View v;
 	private Runnable r;
 	private Handler handler;
+	private final int Update_SeekBar = 0;
+	public static Boolean IsDestroy = false;
+	
+	//Seekbar的最大刻度
+	private int SeekBarMax = 1000;
 	//感知屏幕手势变化
 	private GestureDetector gestureDetector;
 
@@ -71,7 +80,19 @@ public class MyMediaController extends MediaController implements OnClickListene
 		//手势操作
 		gestureDetector = new GestureDetector(activity, new MyGestureListener());
 		videoView.setOnTouchListener(this);
+		videoView.setOnPreparedListener(this);
 		v.setOnTouchListener(this);
+		
+		handler = new Handler() {
+			public void handleMessage(android.os.Message msg) {
+				switch (msg.what) {
+				case Update_SeekBar:
+					long i = (long) msg.obj;
+					seekBar.setProgress((int)i);
+					break;
+				}
+			}
+		};
 	}
 	
 	//自定义 MediaController 返回 View
@@ -114,11 +135,37 @@ public class MyMediaController extends MediaController implements OnClickListene
 		return true;
 	}
 	
+	@Override
+	public void onPrepared(MediaPlayer mp) {
+		Log.d("guohao", "追被好了");
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				while (!IsDestroy) {
+					try {
+						Thread.sleep(1*1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					long i = videoView.getCurrentPosition()*SeekBarMax/videoView.getDuration();
+					Message msg = handler.obtainMessage();
+					msg.what = Update_SeekBar;
+					msg.obj = i;
+					handler.sendMessage(msg);
+				}
+			}
+		}).start();
+	}
+	
 	//SeekBar 改变事件
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		if (fromUser) {
 			show();
+			long currentPosition = seekBar.getProgress();
+			long videoPosition = currentPosition*videoView.getDuration()/SeekBarMax;
+			videoView.seekTo(videoPosition);
 		}
 	}
 
@@ -129,9 +176,7 @@ public class MyMediaController extends MediaController implements OnClickListene
 
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
-		long currentPosition = seekBar.getProgress();
-		long videoPosition = currentPosition*videoView.getDuration()/1000;
-		videoView.seekTo(videoPosition);
+		
 	}
 	
 	//------------------------------------------------------------------------------
