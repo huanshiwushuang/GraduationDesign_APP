@@ -80,6 +80,8 @@ public class MoviePlayActivity extends Activity{
 	private void initSet() {
 		//设置视频---名字
 		controller.setVideoName(movieName);
+		//设置屏幕常亮
+		controller.setScreenOn(true);
 		
 		//每秒检查更新一次时间
 		new Thread(new Runnable() {
@@ -170,5 +172,6 @@ public class MoviePlayActivity extends Activity{
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(batteryBroadcastReceiver);
+		
 	}
 }

@@ -1,27 +1,27 @@
 package com.guohao.custom;
 
 import com.guohao.graduationdesign_app.R;
-import com.guohao.util.Util;
 
 import android.app.Activity;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
+import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
-public class MyMediaController extends MediaController {
+public class MyMediaController extends MediaController implements OnClickListener,OnTouchListener,OnSeekBarChangeListener {
 	private View v;
+	private Runnable r;
+	private Handler handler;
 	//感知屏幕手势变化
 	private GestureDetector gestureDetector;
 
@@ -30,102 +30,134 @@ public class MyMediaController extends MediaController {
 	private ImageView batteryImageView;
 
 	//界面布局 bottom
-	private TextView currentTextView, totalTextView;
+//	private TextView currentTextView, totalTextView;
 	private ImageView statusImageView;
 	private SeekBar seekBar;
 
-	//构造函数---传进来用于通过 MediaController 控制视频的播放
+	//构造函数---传参
 	private VideoView videoView;
-	//Activity 也是上下文，经常用到
 	private Activity activity;
-//	private int controllerWidth = 0;// 设置controllerWidth宽度为了使横屏时top显示在屏幕顶端
 
-	// videoview 用于对视频进行控制的等，activity为了退出
+	// videoview 用于对视频进行控制的等，activity用处较大
 	public MyMediaController(VideoView videoView, Activity activity) {
 		super(activity);
 		this.videoView = videoView;
 		this.activity = activity;
 		initView();
-
-//		DisplayMetrics metrics = new DisplayMetrics();
-//		activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//		controllerWidth = metrics.widthPixels;
-//		gestureDetector = new GestureDetector(activity, new MyGestureListener());
-		
-		
 	}
 
 	private void initView() {
 		v = LayoutInflater.from(activity).inflate(R.layout.custom_mediacontroller, null);
 		
+		//获取布局界面top
 		flowTextView = (TextView) v.findViewById(R.id.id_textview_flow);
 		nameTextView = (TextView) v.findViewById(R.id.id_textview_file_name);
 		batteryTextView = (TextView) v.findViewById(R.id.id_textview_battery);
 		batteryImageView = (ImageView) v.findViewById(R.id.id_imageview_battery);
 		timeTextView = (TextView) v.findViewById(R.id.id_textview_time);
 		
-		statusImageView = (ImageView) findViewById(R.id.mediacontroller_pause); 
-		currentTextView = (TextView) findViewById(R.id.mediacontroller_time_current);
-		seekBar = (SeekBar) findViewById(R.id.mediacontroller_progress);
-		totalTextView = (TextView) findViewById(R.id.mediacontroller_time_total);
+		//获取布局界面bottom
+		statusImageView = (ImageView) v.findViewById(R.id.mediacontroller_pause); 
+		statusImageView.setOnClickListener(this);
+		seekBar = (SeekBar) v.findViewById(R.id.mediacontroller_progress);
+		seekBar.setOnSeekBarChangeListener(this);
+		
+//		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
+//		currentTextView = (TextView) v.findViewById(R.id.mediacontroller_time_current);
+//		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
+//		totalTextView = (TextView) v.findViewById(R.id.mediacontroller_time_total);
+		
+		handler = new Handler();
+		//手势操作
+		gestureDetector = new GestureDetector(activity, new MyGestureListener());
+		videoView.setOnTouchListener(this);
+		v.setOnTouchListener(this);
 	}
-
+	
+	//自定义 MediaController 返回 View
 	@Override
 	protected View makeControllerView() {
 		return v;
 	}
+	
+	private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+		
+		
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent e) {
+			toggleMediaControlsVisiblity();
+			return true;
+		}
+		
+		@Override
+		public boolean onDoubleTap(MotionEvent e) {
+			playOrPause();
+			return true;
+		}
+	}
+	
+	//------------------------------------------------------------------------------
+	
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.mediacontroller_pause:
+			playOrPause();
+			break;
+		}
+	}
+	
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		gestureDetector.onTouchEvent(event);
+		v.performClick();
+		return true;
+	}
+	
+	//SeekBar 改变事件
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		if (fromUser) {
+			show();
+		}
+	}
 
-//	@Override
-//	public boolean dispatchKeyEvent(KeyEvent event) {
-//		Log.d("guohao", "这里是：dispatchKeyEvent");
-//		return true;
-//		// return super.dispatchKeyEvent(event);
-//	}
-//
-//	@Override
-//	public boolean onTouchEvent(MotionEvent event) {
-//		if (gestureDetector.onTouchEvent(event))
-//			return true;
-//		// 处理手势结束
-//		switch (event.getAction() & MotionEvent.ACTION_MASK) {
-//		case MotionEvent.ACTION_UP:
-//			break;
-//		default:
-//			break;
-//		}
-//		return super.onTouchEvent(event);
-//	}
-//
-//	private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-//		@Override
-//		public boolean onSingleTapUp(MotionEvent e) {
-//			return false;
-//		}
-//
-//		@Override
-//		public boolean onSingleTapConfirmed(MotionEvent e) {
-//			// 当收拾结束，并且是单击结束时，控制器隐藏/显示
-//			toggleMediaControlsVisiblity();
-//			return super.onSingleTapConfirmed(e);
-//		}
-//
-//		@Override
-//		public boolean onDown(MotionEvent e) {
-//			return true;
-//		}
-//
-//		@Override
-//		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//			return super.onScroll(e1, e2, distanceX, distanceY);
-//		}
-//
-//		// 双击暂停或开始
-//		@Override
-//		public boolean onDoubleTap(MotionEvent e) {
-//			playOrPause();
-//			return true;
-//		}
-//	}
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		long currentPosition = seekBar.getProgress();
+		long videoPosition = currentPosition*videoView.getDuration()/1000;
+		videoView.seekTo(videoPosition);
+	}
+	
+	//------------------------------------------------------------------------------
+	// 隐藏/显示
+	private void toggleMediaControlsVisiblity() {
+		if (isShowing()) {
+			hide();
+		} else {
+			show();
+		}
+	}
+	
+	// 播放与暂停
+	private void playOrPause() {
+		if (videoView != null) {
+			if (videoView.isPlaying()) {
+				videoView.pause();
+				statusImageView.setImageResource(R.drawable.mediacontroller_play);
+			}else {
+				videoView.start();
+				statusImageView.setImageResource(R.drawable.mediacontroller_pause);
+			}
+		}
+	}
+	
+	//------------------------------------------------------------------------------
 	
 	//显示---瞬时流量
 	public void setFlow(String flow) {
@@ -170,27 +202,10 @@ public class MyMediaController extends MediaController {
 			timeTextView.setText(time);
 		}
 	}
-
 	
-	
+	//设置是否常亮
+	public void setScreenOn(Boolean keepScreenOn) {
+		videoView.setKeepScreenOn(keepScreenOn);
+	}
 
-	// 隐藏/显示
-//	private void toggleMediaControlsVisiblity() {
-//		if (isShowing()) {
-//			hide();
-//		} else {
-//			show();
-//		}
-//	}
-
-	// 播放与暂停
-//	private void playOrPause() {
-//		if (videoView != null) {
-//			if (videoView.isPlaying()) {
-//				videoView.pause();
-//			}else {
-//				videoView.start();
-//			}
-//		}
-//	}
 }
