@@ -1,10 +1,13 @@
 package com.guohao.custom;
 
 import com.guohao.graduationdesign_app.R;
+import com.guohao.util.StringUtil;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -18,17 +21,21 @@ import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
+import io.vov.vitamio.MediaPlayer.OnSeekCompleteListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 @SuppressLint("ClickableViewAccessibility")
-public class MyMediaController extends MediaController implements OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnPreparedListener {
+public class MyMediaController extends MediaController implements OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnSeekCompleteListener,OnPreparedListener {
+	//其他
 	private View v;
-	private Runnable r;
 	private Handler handler;
 	private final int Update_SeekBar = 0;
 	public static Boolean IsDestroy = false;
+	private long LastSeek = 0;
 	
+	//如果正在拖动Seekbar，就不能让Seekbar随视频播放变化.
+//	private Boolean IsMove = false;
 	//Seekbar的最大刻度
 	private int SeekBarMax = 1000;
 	//感知屏幕手势变化
@@ -39,7 +46,7 @@ public class MyMediaController extends MediaController implements OnClickListene
 	private ImageView batteryImageView;
 
 	//界面布局 bottom
-//	private TextView currentTextView, totalTextView;
+	private TextView currentTextView, totalTextView;
 	private ImageView statusImageView;
 	private SeekBar seekBar;
 
@@ -72,17 +79,18 @@ public class MyMediaController extends MediaController implements OnClickListene
 		seekBar.setOnSeekBarChangeListener(this);
 		
 //		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
-//		currentTextView = (TextView) v.findViewById(R.id.mediacontroller_time_current);
+		currentTextView = (TextView) v.findViewById(R.id.mediacontroller_time_current);
 //		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
 //		totalTextView = (TextView) v.findViewById(R.id.mediacontroller_time_total);
 		
-		handler = new Handler();
 		//手势操作
 		gestureDetector = new GestureDetector(activity, new MyGestureListener());
 		videoView.setOnTouchListener(this);
 		videoView.setOnPreparedListener(this);
+		videoView.setOnSeekCompleteListener(this);
 		v.setOnTouchListener(this);
 		
+		handler = new Handler();
 		handler = new Handler() {
 			public void handleMessage(android.os.Message msg) {
 				switch (msg.what) {
@@ -102,23 +110,18 @@ public class MyMediaController extends MediaController implements OnClickListene
 	}
 	
 	private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-		
-		
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
 			toggleMediaControlsVisiblity();
 			return true;
 		}
-		
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			playOrPause();
 			return true;
 		}
 	}
-	
 	//------------------------------------------------------------------------------
-	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -127,58 +130,41 @@ public class MyMediaController extends MediaController implements OnClickListene
 			break;
 		}
 	}
-	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		gestureDetector.onTouchEvent(event);
 		v.performClick();
 		return true;
 	}
-	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
-		Log.d("guohao", "追被好了");
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				while (!IsDestroy) {
-					try {
-						Thread.sleep(1*1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					long i = videoView.getCurrentPosition()*SeekBarMax/videoView.getDuration();
-					Message msg = handler.obtainMessage();
-					msg.what = Update_SeekBar;
-					msg.obj = i;
-					handler.sendMessage(msg);
-				}
-			}
-		}).start();
+		Log.d("guohao", "最大的："+(int)videoView.getDuration());
+		seekBar.setMax((int)videoView.getDuration());
 	}
-	
+	//------------------------------------------------------------------------------
 	//SeekBar 改变事件
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		Log.d("guohao", "当前的："+progress);
+		show();
 		if (fromUser) {
-			show();
-			long currentPosition = seekBar.getProgress();
-			long videoPosition = currentPosition*videoView.getDuration()/SeekBarMax;
-			videoView.seekTo(videoPosition);
+			videoView.seekTo(progress);
+			LastSeek = progress;
 		}
 	}
-
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
 		
 	}
-
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		
 	}
-	
+	//------------------------------------------------------------------------------
+	@Override
+	public void onSeekComplete(MediaPlayer mp) {
+		videoView.seekTo(LastSeek);
+	}
 	//------------------------------------------------------------------------------
 	// 隐藏/显示
 	private void toggleMediaControlsVisiblity() {
@@ -252,5 +238,7 @@ public class MyMediaController extends MediaController implements OnClickListene
 	public void setScreenOn(Boolean keepScreenOn) {
 		videoView.setKeepScreenOn(keepScreenOn);
 	}
+
+	
 
 }

@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.R.integer;
+import android.util.Log;
 
 public class StringUtil {
 	public static Boolean checkAccount(String account) {
@@ -76,5 +77,41 @@ public class StringUtil {
 			list.remove(l.get(i));
 		}
 		return list;
+	}
+	
+	//毫秒转时间格式 00:00
+	public static String millsecondsToTime(long longMillseconds) {
+		long secondsTime = longMillseconds/1000;
+		int hours = (int) (secondsTime/60/60);
+		int minutes = (int) (secondsTime/60%60);
+		int seconds = (int) (secondsTime%60);
+		String returnString = "";
+		
+		if (hours > 9) {
+			returnString += hours+":";
+		}else {
+			if (hours > 0) {
+				returnString += "0"+hours+":";
+			}
+		}
+		if (minutes > 9) {
+			returnString += minutes+":";
+		}else {
+			if (minutes > 0) {
+				returnString += "0"+minutes+":";
+			}else {
+				returnString += "00"+":";
+			}
+		}
+		if (seconds > 9) {
+			returnString += seconds;
+		}else {
+			if (seconds > 0) {
+				returnString += "0"+seconds;
+			}else {
+				returnString += "00";
+			}
+		}
+		return returnString;
 	}
 }
