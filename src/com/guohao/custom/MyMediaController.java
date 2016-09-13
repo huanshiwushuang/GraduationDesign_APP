@@ -151,6 +151,7 @@ public class MyMediaController extends MediaController implements OnErrorListene
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+					Log.d("heihei", "IsSeekComplete£º"+IsSeekComplete+"---"+videoView.isPlaying());
 					if (videoView.isPlaying() && IsSeekComplete) {
 						int i = (int) videoView.getCurrentPosition();
 						seekBar.setProgress(i);
