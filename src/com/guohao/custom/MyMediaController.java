@@ -2,9 +2,9 @@ package com.guohao.custom;
 
 import com.guohao.graduationdesign_app.R;
 import com.guohao.util.Util;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.util.Log;
@@ -21,19 +21,14 @@ import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
+import io.vov.vitamio.MediaPlayer.OnErrorListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.MediaPlayer.OnSeekCompleteListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 @SuppressLint("ClickableViewAccessibility")
-public class MyMediaController extends MediaController implements DialogInterface.OnKeyListener,OnBufferingUpdateListener,OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnSeekCompleteListener,OnPreparedListener {
-	//其他
-	private View v;
-	private long LastSeek = 0;
-	private ProgressDialog dialog;
-	private Boolean IsSeekComplete = true;
-	
+public class MyMediaController extends MediaController implements OnErrorListener,DialogInterface.OnKeyListener,OnBufferingUpdateListener,OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnSeekCompleteListener,OnPreparedListener {
 	//SeekBar 是否正在移动
 	private Boolean IsMove = false;
 	//在Activity销毁时，停止子线程
@@ -41,11 +36,10 @@ public class MyMediaController extends MediaController implements DialogInterfac
 	//感知屏幕手势变化
 	private GestureDetector gestureDetector;
 
-	//界面布局 top 
+	//界面布局 top 和 bottom
 	private TextView flowTextView, nameTextView, batteryTextView, timeTextView;
 	private ImageView batteryImageView;
-	//界面布局 bottom
-//	private TextView currentTextView, totalTextView;
+	//---------------------------------
 	private ImageView statusImageView;
 	private SeekBar seekBar;
 
@@ -53,7 +47,11 @@ public class MyMediaController extends MediaController implements DialogInterfac
 	private VideoView videoView;
 	private Activity activity;
 
-	
+	//其他
+	private View v;
+	private long LastSeek = 0;
+	private ProgressDialog dialog;
+	private Boolean IsSeekComplete = true;
 	
 	// videoview 用于对视频进行控制的等，activity用处较大
 	public MyMediaController(VideoView videoView, Activity activity) {
@@ -75,14 +73,10 @@ public class MyMediaController extends MediaController implements DialogInterfac
 		
 		//获取布局界面bottom
 		statusImageView = (ImageView) v.findViewById(R.id.mediacontroller_pause); 
-		statusImageView.setOnClickListener(this);
 		seekBar = (SeekBar) v.findViewById(R.id.mediacontroller_progress);
-		seekBar.setOnSeekBarChangeListener(this);
 		
-//		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
-//		currentTextView = (TextView) v.findViewById(R.id.mediacontroller_time_current);
-//		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
-//		totalTextView = (TextView) v.findViewById(R.id.mediacontroller_time_total);
+		statusImageView.setOnClickListener(this);
+		seekBar.setOnSeekBarChangeListener(this);
 		
 		//手势操作
 		gestureDetector = new GestureDetector(activity, new MyGestureListener());
@@ -98,7 +92,6 @@ public class MyMediaController extends MediaController implements DialogInterfac
 	protected View makeControllerView() {
 		return v;
 	}
-	
 	private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -138,7 +131,7 @@ public class MyMediaController extends MediaController implements DialogInterfac
 				dialog.show();
 			}
 			dialog.setMessage("正在加载 "+percent+"%");
-			if (percent >= 99) {
+			if (percent >= 98) {
 				Util.dismissProgressDialog();
 				Log.d("guohao", "销毁："+percent+"---"+Util.isShowingProgressDialog());
 			}
@@ -160,8 +153,11 @@ public class MyMediaController extends MediaController implements DialogInterfac
 					}
 					if (videoView.isPlaying() && IsSeekComplete) {
 						int i = (int) videoView.getCurrentPosition();
-						Log.d("guohao", "跟随："+i);
 						seekBar.setProgress(i);
+						Log.d("guohao", "跟随："+i);
+					}
+					if (videoView.isPlaying() && videoView.isBuffering()) {
+						Util.dismissProgressDialog();
 					}
 				}
 			}
@@ -198,15 +194,33 @@ public class MyMediaController extends MediaController implements DialogInterfac
 		//用于拖动加载时候显示
 		if (!Util.isShowingProgressDialog()) {
 			dialog = Util.getProgressDialog(activity);
+			dialog.show();
 			dialog.setOnKeyListener(this);
 		}
 	}
-	//------------------------------------------------------------------------------
 	@Override
 	public void onSeekComplete(MediaPlayer mp) {
 		videoView.seekTo(LastSeek);
 		IsSeekComplete = true;
 		Log.d("guohao", "最后进度："+LastSeek);
+	}
+	@Override
+	public boolean onError(MediaPlayer mp, int what, int extra) {
+		if (Util.isShowingProgressDialog()) {
+			Util.dismissProgressDialog();
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setTitle("Error");
+		builder.setMessage("播放错误："+extra+"---"+what);
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				activity.finish();
+			}
+		});
+		builder.show();
+		return false;
 	}
 	//------------------------------------------------------------------------------
 	// 隐藏/显示
@@ -229,6 +243,10 @@ public class MyMediaController extends MediaController implements DialogInterfac
 			}
 		}
 	}
+	
+	
+	
+	
 	//------------------------------------------------------------------------------
 	//显示---瞬时流量
 	public void setFlow(String flow) {
@@ -270,9 +288,5 @@ public class MyMediaController extends MediaController implements DialogInterfac
 		if (timeTextView != null) {
 			timeTextView.setText(time);
 		}
-	}
-	//设置是否常亮
-	public void setScreenOn(Boolean keepScreenOn) {
-		videoView.setKeepScreenOn(keepScreenOn);
 	}
 }

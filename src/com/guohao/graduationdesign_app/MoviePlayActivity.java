@@ -17,11 +17,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.VideoView;
 
@@ -44,14 +41,12 @@ public class MoviePlayActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		//定义全屏参数
 		int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
 		//获取当前窗体对象
 		Window window = getWindow();
 		//设置当前窗体为全屏显示
 		window.setFlags(flag, flag);
-		
 		Vitamio.isInitialized(this);
 		setContentView(R.layout.activity_movie_play);
 		
@@ -67,22 +62,26 @@ public class MoviePlayActivity extends Activity {
 		startPlay();
 	}
 
-	
-
 	private void startPlay() {
-		videoView.setVideoPath(playUrl);
-		int VideoQuality = Util.getPreferences(MoviePlayActivity.this).getInt(Data.K_Video_Quality, Data.V_Video_Quality_High);
-		videoView.setVideoQuality(VideoQuality);
-		videoView.setMediaController(controller);
-		videoView.setAlpha(0.7f);
-		videoView.requestFocus();
+		videoView.start();
 	}
 	
 	private void initSet() {
 		//设置视频---名字
 		controller.setVideoName(movieName);
 		//设置屏幕常亮
-		controller.setScreenOn(true);
+		videoView.setKeepScreenOn(true);
+		//设置视频播放 Url
+		videoView.setVideoPath(playUrl);
+		//设置视频质量
+		int VideoQuality = Util.getPreferences(MoviePlayActivity.this).getInt(Data.K_Video_Quality, Data.V_Video_Quality_High);
+		videoView.setVideoQuality(VideoQuality);
+		//设置视频---控制器
+		videoView.setMediaController(controller);
+		//设置透明度
+		videoView.setAlpha(0.7f);
+		//设置焦点
+		videoView.requestFocus();
 		
 		//每秒检查更新一次时间
 		new Thread(new Runnable() {
@@ -117,7 +116,6 @@ public class MoviePlayActivity extends Activity {
 		Util.showProgressDialog(this);
 		videoView = (VideoView) findViewById(R.id.id_videoview);
 		controller = new MyMediaController(videoView, this);
-		videoView.setKeepScreenOn(true);
 		
 		handler = new Handler() {
 			public void handleMessage(android.os.Message msg) {
@@ -154,13 +152,11 @@ public class MoviePlayActivity extends Activity {
 		
 		
 	}
-
 	private void initData() {
 		Intent i = getIntent();
 		movieName = i.getStringExtra("movieName");
 		playUrl = i.getStringExtra("playUrl");
 	}
-	
 	//------------------------------------------------------------------------
 	
 	public static void actionStart(Context c, String movieName, String playUrl) {
