@@ -32,7 +32,7 @@ public class MyMediaController extends MediaController implements OnErrorListene
 	//SeekBar 是否正在移动
 	private Boolean IsMove = false;
 	//在Activity销毁时，停止子线程
-	public static Boolean IsDestroy = false;
+	public Boolean IsDestroy = false;
 	//感知屏幕手势变化
 	private GestureDetector gestureDetector;
 
