@@ -32,6 +32,7 @@ public class MyMediaController extends MediaController implements DialogInterfac
 	private View v;
 	private long LastSeek = 0;
 	private ProgressDialog dialog;
+	private Boolean IsSeekComplete = true;
 	
 	//SeekBar 是否正在移动
 	private Boolean IsMove = false;
@@ -147,6 +148,24 @@ public class MyMediaController extends MediaController implements DialogInterfac
 	public void onPrepared(MediaPlayer mp) {
 		Log.d("guohao", "最大的："+(int)videoView.getDuration());
 		seekBar.setMax((int)videoView.getDuration());
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				while (!IsDestroy) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if (videoView.isPlaying() && IsSeekComplete) {
+						int i = (int) videoView.getCurrentPosition();
+						Log.d("guohao", "跟随："+i);
+						seekBar.setProgress(i);
+					}
+				}
+			}
+		}).start();
 	}
 	@Override
 	public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
@@ -160,14 +179,18 @@ public class MyMediaController extends MediaController implements DialogInterfac
 	//SeekBar 改变事件
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-		show();
-		LastSeek = progress;
-		videoView.seekTo(progress);
-		Log.d("guohao", "当前进度："+progress);
+		//这里必须判断，因为在子线程中让 SeekBar 跟随VideoView 播放进度自动前进的时候，是代码控制？？？？
+		if (fromUser) {
+			show();
+			LastSeek = progress;
+			videoView.seekTo(progress);
+			Log.d("guohao", "当前进度："+progress);
+		}
 	}
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
 		IsMove = true;
+		IsSeekComplete = false;
 	}
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
@@ -182,6 +205,7 @@ public class MyMediaController extends MediaController implements DialogInterfac
 	@Override
 	public void onSeekComplete(MediaPlayer mp) {
 		videoView.seekTo(LastSeek);
+		IsSeekComplete = true;
 		Log.d("guohao", "最后进度："+LastSeek);
 	}
 	//------------------------------------------------------------------------------
