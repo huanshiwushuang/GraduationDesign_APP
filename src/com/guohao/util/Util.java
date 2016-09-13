@@ -16,10 +16,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class Util {
 	private static ProgressDialog progressDialog;
+	private static ProgressBar progressBar;
 	
 	public static boolean isEmpty(String string) {
 		if (string == null || string.equals("")) {
@@ -27,14 +29,18 @@ public class Util {
 		}
 		return false;
 	}
-	public static void showProgressDialog(Context context,String title) {
-		progressDialog = new ProgressDialog(context);
-		progressDialog.setMessage(title);
+	public static void showProgressDialog(Context context,String msg) {
+		if (progressBar == null) {
+			progressDialog = new ProgressDialog(context);
+		}
+		progressDialog.setMessage(msg);
 		progressDialog.setCancelable(false);
 		progressDialog.show();
 	}
 	public static void showProgressDialog(Context context) {
-		progressDialog = new ProgressDialog(context);
+		if (progressBar == null) {
+			progressDialog = new ProgressDialog(context);
+		}
 		progressDialog.setMessage("正在加载...");
 		progressDialog.setCancelable(false);
 		progressDialog.show();
@@ -43,6 +49,22 @@ public class Util {
 		if (progressDialog != null) {
 			progressDialog.dismiss();
 		}
+	}
+	public static ProgressDialog getProgressDialog(Context context) {
+		if (progressDialog == null) {
+			progressDialog = new ProgressDialog(context);
+		}
+		progressDialog.setCancelable(false);
+		progressDialog.setMessage("正在加载...");
+		return progressDialog;
+	}
+	public static ProgressDialog getProgressDialog(Context context,String msg) {
+		if (progressDialog == null) {
+			progressDialog = new ProgressDialog(context);
+		}
+		progressDialog.setCancelable(false);
+		progressDialog.setMessage(msg);
+		return progressDialog;
 	}
 	public static Boolean isShowingProgressDialog() {
 		return progressDialog.isShowing();

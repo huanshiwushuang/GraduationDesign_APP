@@ -1,15 +1,15 @@
 package com.guohao.custom;
 
 import com.guohao.graduationdesign_app.R;
-import com.guohao.util.StringUtil;
+import com.guohao.util.Util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.Handler;
-import android.os.Message;
-import android.os.SystemClock;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,33 +20,31 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.MediaPlayer.OnSeekCompleteListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 @SuppressLint("ClickableViewAccessibility")
-public class MyMediaController extends MediaController implements OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnSeekCompleteListener,OnPreparedListener {
+public class MyMediaController extends MediaController implements DialogInterface.OnKeyListener,OnBufferingUpdateListener,OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnSeekCompleteListener,OnPreparedListener {
 	//其他
 	private View v;
-	private Handler handler;
-	private final int Update_SeekBar = 0;
-	public static Boolean IsDestroy = false;
 	private long LastSeek = 0;
+	private ProgressDialog dialog;
 	
-	//如果正在拖动Seekbar，就不能让Seekbar随视频播放变化.
-//	private Boolean IsMove = false;
-	//Seekbar的最大刻度
-	private int SeekBarMax = 1000;
+	//SeekBar 是否正在移动
+	private Boolean IsMove = false;
+	//在Activity销毁时，停止子线程
+	public static Boolean IsDestroy = false;
 	//感知屏幕手势变化
 	private GestureDetector gestureDetector;
 
 	//界面布局 top 
 	private TextView flowTextView, nameTextView, batteryTextView, timeTextView;
 	private ImageView batteryImageView;
-
 	//界面布局 bottom
-	private TextView currentTextView, totalTextView;
+//	private TextView currentTextView, totalTextView;
 	private ImageView statusImageView;
 	private SeekBar seekBar;
 
@@ -54,6 +52,8 @@ public class MyMediaController extends MediaController implements OnClickListene
 	private VideoView videoView;
 	private Activity activity;
 
+	
+	
 	// videoview 用于对视频进行控制的等，activity用处较大
 	public MyMediaController(VideoView videoView, Activity activity) {
 		super(activity);
@@ -79,7 +79,7 @@ public class MyMediaController extends MediaController implements OnClickListene
 		seekBar.setOnSeekBarChangeListener(this);
 		
 //		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
-		currentTextView = (TextView) v.findViewById(R.id.mediacontroller_time_current);
+//		currentTextView = (TextView) v.findViewById(R.id.mediacontroller_time_current);
 //		因为这个 TextView 的id是Vitamio指定的id，就可以自动获取时间显示
 //		totalTextView = (TextView) v.findViewById(R.id.mediacontroller_time_total);
 		
@@ -88,19 +88,8 @@ public class MyMediaController extends MediaController implements OnClickListene
 		videoView.setOnTouchListener(this);
 		videoView.setOnPreparedListener(this);
 		videoView.setOnSeekCompleteListener(this);
+		videoView.setOnBufferingUpdateListener(this);
 		v.setOnTouchListener(this);
-		
-		handler = new Handler();
-		handler = new Handler() {
-			public void handleMessage(android.os.Message msg) {
-				switch (msg.what) {
-				case Update_SeekBar:
-					long i = (long) msg.obj;
-					seekBar.setProgress((int)i);
-					break;
-				}
-			}
-		};
 	}
 	
 	//自定义 MediaController 返回 View
@@ -137,33 +126,63 @@ public class MyMediaController extends MediaController implements OnClickListene
 		return true;
 	}
 	@Override
+	public void onBufferingUpdate(MediaPlayer mp, int percent) {
+		Log.d("guohao", "加载进度："+percent);
+		//如果SeekBar没有移动了
+		if (!IsMove) {
+			//用于自动加载时候显示
+			dialog = Util.getProgressDialog(activity);
+			dialog.setOnKeyListener(this);
+			if (!Util.isShowingProgressDialog()) {
+				dialog.show();
+			}
+			dialog.setMessage("正在加载 "+percent+"%");
+			if (percent >= 99) {
+				Util.dismissProgressDialog();
+				Log.d("guohao", "销毁："+percent+"---"+Util.isShowingProgressDialog());
+			}
+		}
+	}
+	@Override
 	public void onPrepared(MediaPlayer mp) {
 		Log.d("guohao", "最大的："+(int)videoView.getDuration());
 		seekBar.setMax((int)videoView.getDuration());
+	}
+	@Override
+	public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            Util.dismissProgressDialog();
+            activity.finish();
+        }
+		return false;
 	}
 	//------------------------------------------------------------------------------
 	//SeekBar 改变事件
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-		Log.d("guohao", "当前的："+progress);
 		show();
-		if (fromUser) {
-			videoView.seekTo(progress);
-			LastSeek = progress;
-		}
+		LastSeek = progress;
+		videoView.seekTo(progress);
+		Log.d("guohao", "当前进度："+progress);
 	}
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
-		
+		IsMove = true;
 	}
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
-		
+		IsMove = false;
+		//用于拖动加载时候显示
+		if (!Util.isShowingProgressDialog()) {
+			dialog = Util.getProgressDialog(activity);
+			dialog.setOnKeyListener(this);
+		}
 	}
 	//------------------------------------------------------------------------------
 	@Override
 	public void onSeekComplete(MediaPlayer mp) {
 		videoView.seekTo(LastSeek);
+		Log.d("guohao", "最后进度："+LastSeek);
 	}
 	//------------------------------------------------------------------------------
 	// 隐藏/显示
@@ -174,7 +193,6 @@ public class MyMediaController extends MediaController implements OnClickListene
 			show();
 		}
 	}
-	
 	// 播放与暂停
 	private void playOrPause() {
 		if (videoView != null) {
@@ -187,9 +205,7 @@ public class MyMediaController extends MediaController implements OnClickListene
 			}
 		}
 	}
-	
 	//------------------------------------------------------------------------------
-	
 	//显示---瞬时流量
 	public void setFlow(String flow) {
 		if (flowTextView != null) {
@@ -203,7 +219,6 @@ public class MyMediaController extends MediaController implements OnClickListene
 			nameTextView.setText(name);
 		}
 	}
-	
 	// 显示---电量
 	public void setBattery(String stringBattery) {
 		if (timeTextView != null && batteryImageView != null) {
@@ -226,19 +241,14 @@ public class MyMediaController extends MediaController implements OnClickListene
 			}
 		}
 	}
-
 	//设置文字显示---时间
 	public void setTime(String time) {
 		if (timeTextView != null) {
 			timeTextView.setText(time);
 		}
 	}
-	
 	//设置是否常亮
 	public void setScreenOn(Boolean keepScreenOn) {
 		videoView.setKeepScreenOn(keepScreenOn);
 	}
-
-	
-
 }

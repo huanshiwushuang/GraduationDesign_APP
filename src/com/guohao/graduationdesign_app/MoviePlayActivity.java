@@ -21,10 +21,11 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.VideoView;
 
-public class MoviePlayActivity extends Activity{
+public class MoviePlayActivity extends Activity {
 	//²¥·ÅµÄÊÓÆµ Url
 	private String playUrl;
 	private String movieName;
@@ -113,6 +114,7 @@ public class MoviePlayActivity extends Activity{
 	}
 	
 	private void initView() {
+		Util.showProgressDialog(this);
 		videoView = (VideoView) findViewById(R.id.id_videoview);
 		controller = new MyMediaController(videoView, this);
 		videoView.setKeepScreenOn(true);
