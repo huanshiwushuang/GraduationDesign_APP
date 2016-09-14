@@ -5,17 +5,18 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
+        android:id="@+id/id_relative_Mediacontroller_top"
         android:layout_width="match_parent"
         android:layout_height="34dp"
         android:background="#77000000" >
-        <TextView 
+
+        <TextView
             android:id="@+id/id_textview_flow"
-            android:layout_width="75dp"
+            android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textColor="#fff"
             android:layout_marginLeft="10dp"
-            android:text="102kb/s"/>
+            android:gravity="center_vertical"
+            android:textColor="#fff" />
 
         <TextView
             android:id="@+id/id_textview_file_name"
@@ -55,6 +56,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/id_relative_Mediacontroller_bottom"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
@@ -68,12 +70,12 @@
 
         <TextView
             android:id="@+id/mediacontroller_time_current"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/mediacontroller_pause"
             android:gravity="center"
-            android:textColor="#fff"
-            android:text="00:00" />
+            android:text="00:00"
+            android:textColor="#fff" />
 
         <TextView
             android:id="@+id/mediacontroller_time_total"
@@ -82,8 +84,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
-            android:textColor="#fff"
-            android:text="1:20:12" />
+            android:text="1:20:12"
+            android:textColor="#fff" />
 
         <SeekBar
             android:id="@+id/mediacontroller_progress"

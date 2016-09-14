@@ -113,7 +113,6 @@ public class MoviePlayActivity extends Activity {
 	}
 	
 	private void initView() {
-		Util.showProgressDialog(this);
 		videoView = (VideoView) findViewById(R.id.id_videoview);
 		controller = new MyMediaController(videoView, this);
 		
@@ -170,6 +169,7 @@ public class MoviePlayActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(batteryBroadcastReceiver);
+		videoView.stopPlayback();
 		//销毁更新 SeekBar 的子线程
 		controller.IsDestroy = true;
 	}

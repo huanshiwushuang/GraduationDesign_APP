@@ -1,44 +1,44 @@
 package com.guohao.custom;
 
 import com.guohao.graduationdesign_app.R;
-import com.guohao.util.Util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
+import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnErrorListener;
+import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.MediaPlayer.OnSeekCompleteListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 @SuppressLint("ClickableViewAccessibility")
-public class MyMediaController extends MediaController implements OnErrorListener,DialogInterface.OnKeyListener,OnBufferingUpdateListener,OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnSeekCompleteListener,OnPreparedListener {
-	//SeekBar 是否正在移动
-	private Boolean IsMove = false;
+public class MyMediaController extends MediaController implements OnCompletionListener,OnInfoListener,OnErrorListener,OnBufferingUpdateListener,OnClickListener,OnTouchListener,OnSeekBarChangeListener,OnSeekCompleteListener,OnPreparedListener {
 	//在Activity销毁时，停止子线程
 	public Boolean IsDestroy = false;
 	//感知屏幕手势变化
 	private GestureDetector gestureDetector;
 
-	//界面布局 top 和 bottom
+	//界面布局 top、center和 bottom
 	private TextView flowTextView, nameTextView, batteryTextView, timeTextView;
 	private ImageView batteryImageView;
+	//---------------------------------
+	//来自---播放的 Activity 界面的布局文件的。
+	private LinearLayout loadLinearLayout;
+	private TextView loadTextView;
 	//---------------------------------
 	private ImageView statusImageView;
 	private SeekBar seekBar;
@@ -50,8 +50,7 @@ public class MyMediaController extends MediaController implements OnErrorListene
 	//其他
 	private View v;
 	private long LastSeek = 0;
-	private ProgressDialog dialog;
-	private Boolean IsSeekComplete = true;
+	private Boolean IsLoadEnd = true;
 	
 	// videoview 用于对视频进行控制的等，activity用处较大
 	public MyMediaController(VideoView videoView, Activity activity) {
@@ -71,6 +70,10 @@ public class MyMediaController extends MediaController implements OnErrorListene
 		batteryImageView = (ImageView) v.findViewById(R.id.id_imageview_battery);
 		timeTextView = (TextView) v.findViewById(R.id.id_textview_time);
 		
+		//获取---主---布局界面center  必须有 传进来的 activity 得到，如果用LayoutInflater得到的就是新的。
+		loadLinearLayout = (LinearLayout) activity.findViewById(R.id.id_linearlayout_loading);
+		loadTextView = (TextView) activity.findViewById(R.id.id_textview_load_percent);
+		
 		//获取布局界面bottom
 		statusImageView = (ImageView) v.findViewById(R.id.mediacontroller_pause); 
 		seekBar = (SeekBar) v.findViewById(R.id.mediacontroller_progress);
@@ -84,6 +87,7 @@ public class MyMediaController extends MediaController implements OnErrorListene
 		videoView.setOnPreparedListener(this);
 		videoView.setOnSeekCompleteListener(this);
 		videoView.setOnBufferingUpdateListener(this);
+		videoView.setOnInfoListener(this);
 		v.setOnTouchListener(this);
 	}
 	
@@ -122,27 +126,13 @@ public class MyMediaController extends MediaController implements OnErrorListene
 	@Override
 	public void onBufferingUpdate(MediaPlayer mp, int percent) {
 		Log.d("guohao", "加载进度："+percent);
-		//如果SeekBar没有移动了
-		if (!IsMove) {
-			//用于自动加载时候显示
-			dialog = Util.getProgressDialog(activity);
-			dialog.setOnKeyListener(this);
-			if (!Util.isShowingProgressDialog()) {
-				dialog.show();
-			}
-			dialog.setMessage("正在加载 "+percent+"%");
-			if (percent >= 98) {
-				Util.dismissProgressDialog();
-				Log.d("guohao", "销毁："+percent+"---"+Util.isShowingProgressDialog());
-			}
-		}
+		loadTextView.setText(percent+"%");
 	}
 	@Override
 	public void onPrepared(MediaPlayer mp) {
 		Log.d("guohao", "最大的："+(int)videoView.getDuration());
 		seekBar.setMax((int)videoView.getDuration());
 		new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
 				while (!IsDestroy) {
@@ -151,26 +141,42 @@ public class MyMediaController extends MediaController implements OnErrorListene
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					Log.d("heihei", "IsSeekComplete："+IsSeekComplete+"---"+videoView.isPlaying());
-					if (videoView.isPlaying() && IsSeekComplete) {
+					Log.d("heihei", "这个IsLoadEnd："+IsLoadEnd);
+					if (IsLoadEnd) {
 						int i = (int) videoView.getCurrentPosition();
 						seekBar.setProgress(i);
-						Log.d("guohao", "跟随："+i);
-					}
-					if (videoView.isPlaying() && videoView.isBuffering()) {
-						Util.dismissProgressDialog();
+						Log.d("heihei", i+"");
 					}
 				}
 			}
 		}).start();
 	}
 	@Override
-	public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            Util.dismissProgressDialog();
-            activity.finish();
-        }
-		return false;
+	public boolean onInfo(MediaPlayer mp, int what, int extra) {
+		switch (what) {
+	    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+	    	pause();
+	    	loadLinearLayout.setVisibility(View.VISIBLE); 
+	    	loadTextView.setText("");
+	    	IsLoadEnd = false;
+	    	Log.d("guohao", "开始缓冲");
+	      break;
+	    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+	    	play();
+	    	loadLinearLayout.setVisibility(View.GONE);
+	    	IsLoadEnd = true;
+	    	Log.d("guohao", "结束缓冲");
+	      break;
+	    case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
+	    	flowTextView.setText(extra+"kb/s");
+	    	Log.d("guohao", "缓冲速度："+extra);
+	      break;
+	    }
+	    return true;
+	}
+	@Override
+	public void onCompletion(MediaPlayer mp) {
+		statusImageView.setImageResource(R.drawable.mediacontroller_play);
 	}
 	//------------------------------------------------------------------------------
 	//SeekBar 改变事件
@@ -186,42 +192,21 @@ public class MyMediaController extends MediaController implements OnErrorListene
 	}
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
-		IsMove = true;
-		IsSeekComplete = false;
+		
 	}
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
-		IsMove = false;
-		//用于拖动加载时候显示
-		if (!Util.isShowingProgressDialog()) {
-			dialog = Util.getProgressDialog(activity);
-			dialog.show();
-			dialog.setOnKeyListener(this);
-		}
+		
 	}
 	@Override
 	public void onSeekComplete(MediaPlayer mp) {
 		videoView.seekTo(LastSeek);
-		IsSeekComplete = true;
 		Log.d("guohao", "最后进度："+LastSeek);
 	}
 	@Override
 	public boolean onError(MediaPlayer mp, int what, int extra) {
-		if (Util.isShowingProgressDialog()) {
-			Util.dismissProgressDialog();
-		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle("Error");
-		builder.setMessage("播放错误："+extra+"---"+what);
-		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				activity.finish();
-			}
-		});
-		builder.show();
-		return false;
+		Log.d("guohao", "错误："+extra+"---"+what);
+		return true;
 	}
 	//------------------------------------------------------------------------------
 	// 隐藏/显示
@@ -244,18 +229,15 @@ public class MyMediaController extends MediaController implements OnErrorListene
 			}
 		}
 	}
-	
-	
-	
-	
-	//------------------------------------------------------------------------------
-	//显示---瞬时流量
-	public void setFlow(String flow) {
-		if (flowTextView != null) {
-			flowTextView.setText(flow);
-		}
+	private void play() {
+		videoView.start();
+		statusImageView.setImageResource(R.drawable.mediacontroller_pause);
 	}
-	
+	private void pause() {
+		videoView.pause();
+		statusImageView.setImageResource(R.drawable.mediacontroller_play);
+	}
+	//------------------------------------------------------------------------------
 	//显示电影名字。  疑惑：使用 Vitamio 的方法设置文件名，不行？
 	public void setVideoName(String name) {
 		if (nameTextView != null) {
@@ -290,4 +272,5 @@ public class MyMediaController extends MediaController implements OnErrorListene
 			timeTextView.setText(time);
 		}
 	}
+
 }
