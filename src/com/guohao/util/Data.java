@@ -55,5 +55,10 @@ public class Data {
 	public static final int V_Video_Quality_High = MediaPlayer.VIDEOQUALITY_HIGH;
 	public static final int V_Video_Quality_Medium = MediaPlayer.VIDEOQUALITY_MEDIUM;
 	public static final int V_Video_Quality_Low = MediaPlayer.VIDEOQUALITY_LOW;
+	//选择android 原生播放还是 vitamio 播放
+	public static final String K_Player = "0";
+	public static final int V_Player_Default = 1;
+	public static final int V_Player_Vitamio = 2;
+	
 	
 }

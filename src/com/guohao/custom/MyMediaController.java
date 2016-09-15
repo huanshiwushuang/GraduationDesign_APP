@@ -153,6 +153,7 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	}
 	@Override
 	public boolean onInfo(MediaPlayer mp, int what, int extra) {
+		Log.d("guohao", "–≈œ¢£∫"+what+"---"+extra);
 		switch (what) {
 	    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
 	    	pause();
