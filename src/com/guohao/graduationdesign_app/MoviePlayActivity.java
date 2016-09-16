@@ -48,6 +48,7 @@ public class MoviePlayActivity extends Activity {
 		//设置当前窗体为全屏显示
 		window.setFlags(flag, flag);
 		Vitamio.isInitialized(this);
+		
 		setContentView(R.layout.activity_movie_play);
 		
 		//1-初始化数据---获取播放 Url
@@ -78,8 +79,6 @@ public class MoviePlayActivity extends Activity {
 		videoView.setVideoQuality(VideoQuality);
 		//设置视频---控制器
 		videoView.setMediaController(controller);
-		//设置透明度
-		videoView.setAlpha(0.7f);
 		//设置焦点
 		videoView.requestFocus();
 		

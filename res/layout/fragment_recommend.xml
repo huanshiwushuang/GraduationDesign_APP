@@ -16,14 +16,14 @@
             android:background="#fff" >
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
-    
-    <TextView 
+
+    <TextView
         android:id="@+id/id_textview_refresh_prompt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:text="下拉刷新"
         android:textSize="25sp"
-        android:visibility="gone"
-        android:text="下拉刷新"/>
+        android:visibility="gone" />
 
 </RelativeLayout>
