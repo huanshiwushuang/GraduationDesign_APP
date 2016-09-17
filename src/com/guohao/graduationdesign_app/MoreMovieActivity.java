@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.guohao.custom.LoadMore;
+import com.guohao.custom.LoadMore.OnLoadListener;
 import com.guohao.fragment.RecommendFragment;
 import com.guohao.inter.HttpCallBackListenerString;
 import com.guohao.util.Data;
@@ -32,9 +34,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MoreMovieActivity extends Activity {
+public class MoreMovieActivity extends Activity implements OnLoadListener {
 	private String want;
 	private ListView listView;
+	private LoadMore loadMore;
+	private MoreAdapter adapter;
 	//根据 RecommendFragment 中的加载的电影数量，决定这里加载从 第几部开始
 	private int startLine;
 	private int nextLine;
@@ -132,7 +136,7 @@ public class MoreMovieActivity extends Activity {
 		for (int i = 0; i < list.size(); i++) {
 			Log.d("guohao", "第 "+i+" 个"+list.get(i));
 		}
-		MoreAdapter adapter = new MoreAdapter();
+		adapter = new MoreAdapter();
 		listView.setAdapter(adapter);
 	}
 	
@@ -254,6 +258,9 @@ public class MoreMovieActivity extends Activity {
 	private void initView() {
 		listView = (ListView) findViewById(R.id.id_listview_more_movie);
 		list = new ArrayList<String>();
+		loadMore = (LoadMore) findViewById(R.id.id_loadmore);
+		loadMore.setOnLoadListener(this);
+		
 		handler = new Handler() {
 			public void handleMessage(android.os.Message msg) {
 				switch (msg.what) {
@@ -271,6 +278,28 @@ public class MoreMovieActivity extends Activity {
 		};
 	}
 
+
+	@Override
+	public void onLoad() {
+		Util.showToast(MoreMovieActivity.this, "load");
+
+        loadMore.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+            	//改变请求的数据行数
+            	nextLine += loadCountOnce;
+            	//开始请求数据
+            	getData();
+            	//刷新listview
+                adapter.notifyDataSetChanged();
+                // 加载完后调用该方法
+                loadMore.setLoading(false);
+            }
+        }, 1500);
+
+	}
+	
 	private void initData() {
 		Intent intent = getIntent();
 		want = intent.getStringExtra("want");
@@ -284,4 +313,5 @@ public class MoreMovieActivity extends Activity {
 		intent.putExtra("want", want);
 		c.startActivity(intent);
 	}
+
 }

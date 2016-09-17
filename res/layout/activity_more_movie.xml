@@ -3,21 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <TextView 
+
+    <TextView
         android:id="@+id/id_textview_more_title"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="#0f0"
-        android:paddingLeft="5dp"
         android:gravity="center_vertical"
-        android:text="测试"/>
-    
-    <ListView 
-        android:id="@+id/id_listview_more_movie"
+        android:paddingLeft="5dp"
+        android:text="测试" />
+
+    <com.guohao.custom.LoadMore
+        android:id="@+id/id_loadmore"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
-    </ListView>
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <ListView
+            android:id="@+id/id_listview_more_movie"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </ListView>
+    </com.guohao.custom.LoadMore>
 
 </LinearLayout>
