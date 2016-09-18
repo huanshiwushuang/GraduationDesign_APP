@@ -74,7 +74,7 @@ public class Util {
 	public static String getBigImageAddress(String address) {
 		//http://tu80s2.b0.upaiyun.com/upload/img/201506/3168.jpg
 		int i = address.lastIndexOf(".");
-		if (!address.substring(i-2, i).contains("_b")) {
+		if (i != -1 && !address.substring(i-2, i).contains("_b")) {
 			address = address.substring(0, i)+"_b"+address.substring(i, address.length());
 		}
 		return address;

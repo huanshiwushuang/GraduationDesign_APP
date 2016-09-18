@@ -23,7 +23,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,7 +37,6 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	private String want;
 	private ListView listView;
 	private LoadMore loadMore;
-	private MoreAdapter adapter;
 	//根据 RecommendFragment 中的加载的电影数量，决定这里加载从 第几部开始
 	private int startLine;
 	private int nextLine;
@@ -52,12 +50,12 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	
 	private Handler handler;
 	private List<String> list;
+	private MoreAdapter adapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_more_movie);
-		
 		initData();
 		initView();
 		getData();
@@ -72,7 +70,6 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 				try {
 					JSONObject object = new JSONObject(response);
 					String code = object.getString(Data.KEY_CODE);
-					
 					if (code.equals(Data.VALUE_OK)) {
 						JSONArray array = object.getJSONArray(Data.KEY_DATA);
 						int i = array.length();
@@ -133,11 +130,7 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	}
 
 	private void setData() {
-		for (int i = 0; i < list.size(); i++) {
-			Log.d("guohao", "第 "+i+" 个"+list.get(i));
-		}
-		adapter = new MoreAdapter();
-		listView.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
 	}
 	
 	class MoreAdapter extends BaseAdapter implements OnClickListener {
@@ -259,6 +252,8 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 		listView = (ListView) findViewById(R.id.id_listview_more_movie);
 		list = new ArrayList<String>();
 		loadMore = (LoadMore) findViewById(R.id.id_loadmore);
+		adapter = new MoreAdapter();
+		listView.setAdapter(adapter);
 		loadMore.setOnLoadListener(this);
 		
 		handler = new Handler() {
@@ -266,12 +261,12 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 				switch (msg.what) {
 				case Load_Data_Success:
 					setData();
+					loadDataEnd();
 					break;
 				case Load_Data_Fail:
 					String errorMsg = (String) msg.obj;
 					Util.showToast(MoreMovieActivity.this, errorMsg);
-					break;
-				default:
+					loadDataEnd();
 					break;
 				}
 			}
@@ -279,22 +274,18 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	}
 
 
+	protected void loadDataEnd() {
+        loadMore.setLoading(false);
+	}
+
 	@Override
 	public void onLoad() {
-		Util.showToast(MoreMovieActivity.this, "load");
-
         loadMore.postDelayed(new Runnable() {
-
             @Override
             public void run() {
-            	//改变请求的数据行数
             	nextLine += loadCountOnce;
             	//开始请求数据
             	getData();
-            	//刷新listview
-                adapter.notifyDataSetChanged();
-                // 加载完后调用该方法
-                loadMore.setLoading(false);
             }
         }, 1500);
 

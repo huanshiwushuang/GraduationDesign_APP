@@ -47,12 +47,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class RecommendFragment extends Fragment {
-	private Handler handler;
 	private ListView listView;
 	private View view;
 	private TextView refreshPrompt;
+	
 	private final int Loading_Data_Success = 1;
 	private final int Loading_Data_Fail = 0;
+	
 	private final String Recommend_M = "推荐电影";
 	private final String Hot_M = "热门电影";
 	private final String Newest_M = "最新电影";
@@ -62,14 +63,123 @@ public class RecommendFragment extends Fragment {
 	public static final int CLASS_COUNT = 11;
 	//存储所有-每行数据
 	private List<String> list;
+	private RecommendAdapter adapter;
 	
 	//标识符---表明网络请求是否完成（当重复多次刷新时候，需要保证在 网络数据 加载到 List 完成以后，才进行下次刷新）
-	
 	private SwipeRefreshLayout refreshLayout;
-	
 	private NetworkInfo info;
 	
-
+	private Handler handler = new Handler() {
+		private String want,error;
+		private JSONArray array;
+		private String startLine,endLine;
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case Loading_Data_Success:
+				Object[] objects = (Object[]) msg.obj;
+				want = (String) objects[0];
+				array = (JSONArray) objects[1];
+				startLine = (String) objects[2];
+				endLine = (String) objects[3];
+				
+				next();
+				setDataInList();
+				break;
+			case Loading_Data_Fail:
+				Object[] objs = (Object[]) msg.obj;
+				want = (String) objs[0];
+				error = (String) objs[1];
+				startLine = (String) objs[2];
+				endLine = (String) objs[3];
+				
+				Util.showToast(getActivity(), error);
+				next();
+				break;
+			default:
+				break;
+			}
+		}
+		private void setDataInList() {
+			switch (want) {
+			case Data.Recommend:
+				//占位子的，用于 hot highMark 等的标题位置。
+				list.add(Recommend_M);
+				addDataToList(array);
+				break;
+			case Data.Hot:
+				//占位子的，用于 hot highMark 等的标题位置。
+				list.add(Hot_M);
+				addDataToList(array);
+				break;
+			case Data.Newest:
+				//占位子的，用于 hot highMark 等的标题位置。
+				list.add(Newest_M);
+				addDataToList(array);
+				break;
+			case Data.HighMark:
+				//占位子的，用于 hot highMark 等的标题位置。
+				list.add(HighMark_M);
+				addDataToList(array);
+				break;
+			default:
+				break;
+			}
+			adapter.notifyDataSetChanged();
+		}
+		private void addDataToList(JSONArray array) {
+			StringBuilder builder = new StringBuilder();
+			int j = array.length()/LINE_COUNT;
+			int k = array.length()%LINE_COUNT;
+			//每类-有这么多行（比如热门电影）
+			int m = (k == 0 ? j : j+1);
+			//每类-最后一行有多少个
+			int p = (k == 0 ? LINE_COUNT : k);
+			//每排的个数
+			int o = LINE_COUNT;
+			for (int i = 0; i < m; i++) {
+				j = i*LINE_COUNT;
+				o = (i == m-1 ? p : LINE_COUNT);
+				builder.append("[");
+				for (int n = j; n < j+o; n++) {
+					try {
+						builder.append(array.get(n).toString());
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					if (n != j+o-1) {
+						builder.append(",");
+					}
+				}
+				builder.append("]");
+				list.add(builder.toString());
+				builder.delete(0, builder.length());
+			}
+		}
+		private void next() {
+			switch (want) {
+			case Data.Recommend:
+				list.clear();
+				getData(Data.Hot, startLine, endLine);
+				break;
+			case Data.Hot:
+				getData(Data.Newest, startLine, endLine);
+				break;
+			case Data.Newest:
+				getData(Data.HighMark, startLine, endLine);
+				break;
+			case Data.HighMark:
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						refreshLayout.setRefreshing(false);
+					}
+				}, 200);
+				Util.dismissProgressDialog();
+				break;
+			}
+		}
+	};
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -81,7 +191,6 @@ public class RecommendFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
 		initView();
 		Util.showProgressDialog(getActivity(), "正在加载数据...");
 		info = Util.getNetworkInfo(getActivity());
@@ -100,21 +209,15 @@ public class RecommendFragment extends Fragment {
 		refreshPrompt = (TextView) view.findViewById(R.id.id_textview_refresh_prompt);
 		refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.id_swiperefreshlayout_refresh);
 		refreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
+		adapter = new RecommendAdapter();
+		listView.setAdapter(adapter);
 		
 		refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-			
 			@Override
 			public void onRefresh() {
-				if (Util.isShowingProgressDialog()) {
-					return;
-				}
-				
 				refreshPrompt.setVisibility(View.GONE);
 				info = Util.getNetworkInfo(getActivity());
 				if (info != null && info.isAvailable()) {
-					list.clear();
-					Util.showProgressDialog(getActivity(),"正在刷新...");
-					
 					getData(Data.Recommend,"1",CLASS_COUNT+"");
 				}else {
 					if (list.size() == 0) {
@@ -125,35 +228,14 @@ public class RecommendFragment extends Fragment {
 				}
 			}
 		});
-		
-		handler = new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
-				switch (msg.what) {
-				case Loading_Data_Success:
-					refreshLayout.setRefreshing(false);
-					Util.dismissProgressDialog();
-					Util.showToast(getActivity(), "刷新成功");
-					setAdapterData();
-					break;
-				case Loading_Data_Fail:
-					Util.showToast(getActivity(), (String)msg.obj);
-					break;
-				default:
-					break;
-				}
-			}
-		};
 	}
-
 	private void getData(final String want, final String startLine, final String endLine) {
-		
 		HttpUtil.visitMovieInfoTable(want, startLine, endLine, new HttpCallBackListenerString() {
 			
 			public void onFinish(String response) {
+				Message msg = handler.obtainMessage();
 				String code = null;
 				String data = null;
-				
 				try {
 					JSONObject object = new JSONObject(response);
 					code = object.getString(Data.KEY_CODE);
@@ -168,120 +250,24 @@ public class RecommendFragment extends Fragment {
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					
-					switch (want) {
-					case Data.Recommend:
-						//占位子的，用于 hot highMark 等的标题位置。
-						list.add(Recommend_M);
-						
-						addDataToList(array);
-//						getData(Data.Hot, startLine, endLine);
-						next();
-						break;
-					case Data.Hot:
-						//占位子的，用于 hot highMark 等的标题位置。
-						list.add(Hot_M);
-						
-						addDataToList(array);
-//						getData(Data.Newest, startLine, endLine);
-						next();
-						break;
-					case Data.Newest:
-						//占位子的，用于 hot highMark 等的标题位置。
-						list.add(Newest_M);
-						
-						addDataToList(array);
-//						getData(Data.HighMark, startLine, endLine);
-						next();
-						break;
-					case Data.HighMark:
-						//占位子的，用于 hot highMark 等的标题位置。
-						list.add(HighMark_M);
-						
-						addDataToList(array);
-						next();
-						break;
-					default:
-						break;
-					}
+					msg.what = Loading_Data_Success;
+					msg.obj = new Object[]{want,array,startLine,endLine};
+					handler.sendMessage(msg);
 				}else {
-					Message msg = handler.obtainMessage();
-					msg.obj = want+"："+data;
+					msg.obj = new Object[]{want,data,startLine,endLine};
 					msg.what = Loading_Data_Fail;
 					handler.sendMessage(msg);
-					next();
 				}
 			}
 			
 			public void onError(String e) {
 				Message msg = handler.obtainMessage();
-				msg.obj = want+"："+e;
+				msg.obj = new Object[]{want,e,startLine,endLine};
 				msg.what = Loading_Data_Fail;
 				handler.sendMessage(msg);
-				next();
-			}
-
-			private void next() {
-				switch (want) {
-				case Data.Recommend:
-					getData(Data.Hot, startLine, endLine);
-					break;
-				case Data.Hot:
-					getData(Data.Newest, startLine, endLine);
-					break;
-				case Data.Newest:
-					getData(Data.HighMark, startLine, endLine);
-					break;
-				case Data.HighMark:
-					//将数据设置到  listview 中。  记得在主线程中哦！
-					Message msg = handler.obtainMessage();
-					msg.what = Loading_Data_Success;
-					handler.sendMessage(msg);
-					break;
-				}
-			}
-			
-			private void addDataToList(JSONArray array) {
-				StringBuilder builder = new StringBuilder();
-				int j = array.length()/LINE_COUNT;
-				int k = array.length()%LINE_COUNT;
-				//每类-有这么多行（比如热门电影）
-				int m = (k == 0 ? j : j+1);
-				//每类-最后一行有多少个
-				int p = (k == 0 ? LINE_COUNT : k);
-				//每排的个数
-				int o = LINE_COUNT;
-				for (int i = 0; i < m; i++) {
-					j = i*LINE_COUNT;
-					o = (i == m-1 ? p : LINE_COUNT);
-					builder.append("[");
-					for (int n = j; n < j+o; n++) {
-						try {
-							builder.append(array.get(n).toString());
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						if (n != j+o-1) {
-							builder.append(",");
-						}
-					}
-					builder.append("]");
-					list.add(builder.toString());
-					builder.delete(0, builder.length());
-				}
 			}
 		});
 	}
-
-	private void setAdapterData() {
-		for (int i = 0; i < list.size(); i++) {
-			Log.d("guohao", i+"：LIST数据："+list.get(i));
-		}
-		RecommendAdapter adapter = new RecommendAdapter();
-		listView.setAdapter(adapter);
-	}
-	
-	
 	
 	class RecommendAdapter extends BaseAdapter implements OnClickListener {
 		Context mContext;
@@ -465,7 +451,6 @@ public class RecommendFragment extends Fragment {
 			loader.displayImage(picLink, image);
 		}
 	}
-	
 	class ViewHolderTitle {
 		TextView name;
 		TextView more;

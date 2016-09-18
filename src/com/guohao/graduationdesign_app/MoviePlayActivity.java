@@ -47,6 +47,9 @@ public class MoviePlayActivity extends Activity {
 		Window window = getWindow();
 		//设置当前窗体为全屏显示
 		window.setFlags(flag, flag);
+		//保持屏幕常亮
+		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
 		Vitamio.isInitialized(this);
 		
 		setContentView(R.layout.activity_movie_play);
