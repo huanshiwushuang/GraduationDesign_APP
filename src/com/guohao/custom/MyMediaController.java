@@ -1,6 +1,8 @@
 package com.guohao.custom;
 
 import com.guohao.graduationdesign_app.R;
+import com.guohao.util.Util;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
@@ -55,6 +57,8 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	private View v;
 	private long LastSeek = 0;
 	private Boolean IsLoadEnd = true;
+	//正在加载
+	private Boolean isLoading = false;
 	
 	// videoview 用于对视频进行控制的等，activity用处较大
 	public MyMediaController(VideoView videoView, Activity activity) {
@@ -160,6 +164,8 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 		Log.d("guohao", "信息："+what+"---"+extra);
 		switch (what) {
 	    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+	    	//正在加载期间，不能播放
+	    	isLoading = true;
 	    	pause();
 	    	loadLinearLayout.setVisibility(View.VISIBLE); 
 	    	loadTextView.setText("");
@@ -167,6 +173,8 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	    	Log.d("guohao", "开始缓冲");
 	      break;
 	    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+	    	//正在加载期间，不能播放
+	    	isLoading = false;
 	    	play();
 	    	loadLinearLayout.setVisibility(View.GONE);
 	    	IsLoadEnd = true;
@@ -229,12 +237,20 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 				videoView.pause();
 				statusImageView.setImageResource(R.drawable.mediacontroller_play);
 			}else {
+				if (isLoading) {
+					Util.showToast(activity, "正在加载...");
+					return;
+				}
 				videoView.start();
 				statusImageView.setImageResource(R.drawable.mediacontroller_pause);
 			}
 		}
 	}
 	private void play() {
+		if (isLoading) {
+			Util.showToast(activity, "正在加载...");
+			return;
+		}
 		videoView.start();
 		statusImageView.setImageResource(R.drawable.mediacontroller_pause);
 	}
