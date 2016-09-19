@@ -6,8 +6,7 @@
 
     <com.guohao.custom.Title
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#F00" >
+        android:layout_height="wrap_content" >
     </com.guohao.custom.Title>
 
     <android.support.v4.view.ViewPager

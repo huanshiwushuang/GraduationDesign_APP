@@ -51,16 +51,24 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	private Handler handler;
 	private List<String> list;
 	private MoreAdapter adapter;
+	private String titleStr;
+	private TextView titleTextView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_more_movie);
+		Util.showProgressDialog(this);
 		initData();
 		initView();
+		setBaseData();
 		getData();
 	}
 	
+	private void setBaseData() {
+		titleTextView.setText(titleStr);
+	}
+
 	private void getData() {
 		HttpUtil.visitMovieInfoTable(want, nextLine+"", nextLine+loadCountOnce-1+"", new HttpCallBackListenerString() {
 			
@@ -255,18 +263,19 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 		adapter = new MoreAdapter();
 		listView.setAdapter(adapter);
 		loadMore.setOnLoadListener(this);
+		titleTextView = (TextView) findViewById(R.id.id_textview_more_title);
 		
 		handler = new Handler() {
 			public void handleMessage(android.os.Message msg) {
 				switch (msg.what) {
 				case Load_Data_Success:
 					setData();
-					loadDataEnd();
+					loadMoreDataEnd();
 					break;
 				case Load_Data_Fail:
 					String errorMsg = (String) msg.obj;
 					Util.showToast(MoreMovieActivity.this, errorMsg);
-					loadDataEnd();
+					loadMoreDataEnd();
 					break;
 				}
 			}
@@ -274,8 +283,9 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	}
 
 
-	protected void loadDataEnd() {
+	protected void loadMoreDataEnd() {
         loadMore.setLoading(false);
+        Util.dismissProgressDialog();
 	}
 
 	@Override
@@ -294,6 +304,23 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	private void initData() {
 		Intent intent = getIntent();
 		want = intent.getStringExtra("want");
+		switch (want) {
+		case Data.Recommend:
+			titleStr = "推荐电影";
+			break;
+		case Data.Hot:
+			titleStr = "热门电影";
+			break;
+		case Data.Newest:
+			titleStr = "最新电影";
+			break;
+		case Data.HighMark:
+			titleStr = "高分电影";
+			break;
+		default:
+			titleStr = "电影";
+			break;
+		}
 		
 		startLine = RecommendFragment.CLASS_COUNT+1;
 		nextLine = startLine;

@@ -174,7 +174,7 @@ public class RecommendFragment extends Fragment {
 					public void run() {
 						refreshLayout.setRefreshing(false);
 					}
-				}, 200);
+				}, 700);
 				Util.dismissProgressDialog();
 				break;
 			}

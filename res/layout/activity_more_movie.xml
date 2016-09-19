@@ -8,10 +8,9 @@
         android:id="@+id/id_textview_more_title"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#0f0"
+        android:background="#6bfafa"
         android:gravity="center_vertical"
-        android:paddingLeft="5dp"
-        android:text="测试" />
+        android:paddingLeft="8dp" />
 
     <com.guohao.custom.LoadMore
         android:id="@+id/id_loadmore"

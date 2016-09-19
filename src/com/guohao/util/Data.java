@@ -42,8 +42,6 @@ public class Data {
 	
 	
 	
-	
-	
 	//----------------------------------------可以进行设置的-----------------------------------------------
 	//配置文件
 	//---加载大图还是小图
@@ -59,6 +57,7 @@ public class Data {
 	public static final String K_Player = "0";
 	public static final int V_Player_Default = 1;
 	public static final int V_Player_Vitamio = 2;
+	
 	
 	
 }
