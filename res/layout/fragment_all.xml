@@ -25,7 +25,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="27dp"
                 android:gravity="center_vertical" >
 
                 <TextView
@@ -34,15 +34,21 @@
                     android:text="语言：" />
 
                 <HorizontalScrollView
-                    android:id="@+id/id_horizontalscrollView_language"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
+
+                    <LinearLayout
+                        android:id="@+id/id_linearlayout_language"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+                    </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="27dp"
                 android:gravity="center_vertical" >
 
                 <TextView
@@ -51,15 +57,21 @@
                     android:text="类型：" />
 
                 <HorizontalScrollView
-                    android:id="@+id/id_horizontalscrollView_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
+
+                    <LinearLayout
+                        android:id="@+id/id_linearlayout_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+                    </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="27dp"
                 android:gravity="center_vertical" >
 
                 <TextView
@@ -68,15 +80,21 @@
                     android:text="年代：" />
 
                 <HorizontalScrollView
-                    android:id="@+id/id_horizontalscrollView_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
+
+                    <LinearLayout
+                        android:id="@+id/id_linearlayout_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+                    </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="27dp"
                 android:gravity="center_vertical" >
 
                 <TextView
@@ -85,15 +103,21 @@
                     android:text="地区：" />
 
                 <HorizontalScrollView
-                    android:id="@+id/id_horizontalscrollView_region"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
+
+                    <LinearLayout
+                        android:id="@+id/id_linearlayout_region"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+                    </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="27dp"
                 android:gravity="center_vertical" >
 
                 <TextView
@@ -102,9 +126,15 @@
                     android:text="排序：" />
 
                 <HorizontalScrollView
-                    android:id="@+id/id_horizontalscrollView_other"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
+
+                    <LinearLayout
+                        android:id="@+id/id_linearlayout_other"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+                    </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
         </LinearLayout>

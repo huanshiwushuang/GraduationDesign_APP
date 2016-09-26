@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 
@@ -17,7 +20,9 @@ public class AllFragment extends Fragment implements OnClickListener {
 	private ExpandView expandView;
 	private View view;
 	private String[] language,type,date,region,other;
+	private String[] languageSql,typeSql,dateSql,regionSql,otherSql;
 	private TextView showTextView;
+	private LinearLayout languageLayout,typeLayout,dateLayout,regionLayout,otherLayout;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,6 +37,22 @@ public class AllFragment extends Fragment implements OnClickListener {
 		super.onActivityCreated(savedInstanceState);
 		
 		initView();
+		initLocalData(language,languageLayout);
+		initLocalData(type,typeLayout);
+		initLocalData(date,dateLayout);
+		initLocalData(region,regionLayout);
+		initLocalData(other,otherLayout);
+	}
+
+	private void initLocalData(String[] array,LinearLayout layout) {
+		for (int i = 0; i < array.length; i++) {
+			TextView t = new TextView(getActivity());
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			params.setMargins(5, 0, 5, 0);
+			t.setLayoutParams(params);
+			t.setText(array[i]);
+			layout.addView(t);
+		}
 	}
 
 	private void initView() {
@@ -44,6 +65,18 @@ public class AllFragment extends Fragment implements OnClickListener {
 		region = new String[]{"全部","大陆","香港","台湾","美国","法国","英国","日本",
 							"韩国","德国","泰国","印度","意大利","西班牙","加拿大","其他"};
 		other = new String[]{"最新","特别","好评"};
+		//------------------------------------------------
+		languageSql = new String[]{};
+		typeSql = new String[]{};
+		dateSql = new String[]{};
+		regionSql = new String[]{};
+		otherSql = new String[]{};
+		//------------------------------------------------
+		languageLayout = (LinearLayout) view.findViewById(R.id.id_linearlayout_language);
+		typeLayout = (LinearLayout) view.findViewById(R.id.id_linearlayout_type);
+		dateLayout = (LinearLayout) view.findViewById(R.id.id_linearlayout_date);
+		regionLayout = (LinearLayout) view.findViewById(R.id.id_linearlayout_region);
+		otherLayout = (LinearLayout) view.findViewById(R.id.id_linearlayout_other);
 		//------------------------------------------------
 		expandView = (ExpandView) view.findViewById(R.id.id_expandview);
 		showTextView = (TextView) view.findViewById(R.id.id_textview_show);
