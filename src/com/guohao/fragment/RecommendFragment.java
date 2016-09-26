@@ -104,6 +104,7 @@ public class RecommendFragment extends Fragment {
 			switch (want) {
 			case Data.Recommend:
 				//占位子的，用于 hot highMark 等的标题位置。
+				list.clear();
 				list.add(Recommend_M);
 				addDataToList(array);
 				break;
@@ -159,7 +160,6 @@ public class RecommendFragment extends Fragment {
 		private void next() {
 			switch (want) {
 			case Data.Recommend:
-				list.clear();
 				getData(Data.Hot, startLine, endLine);
 				break;
 			case Data.Hot:

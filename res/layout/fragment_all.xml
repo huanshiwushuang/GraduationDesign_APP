@@ -2,12 +2,118 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#0f0" >
-    
-    <TextView 
-        android:layout_width="wrap_content"
+    android:background="#0f0"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/id_textview_show"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="第二个fragment"/>
+        android:background="#6bfafa"
+        android:gravity="center"
+        android:text="隐藏" />
+
+    <com.guohao.custom.ExpandView
+        android:id="@+id/id_expandview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:gravity="center_vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="语言：" />
+
+                <HorizontalScrollView
+                    android:id="@+id/id_horizontalscrollView_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:gravity="center_vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="类型：" />
+
+                <HorizontalScrollView
+                    android:id="@+id/id_horizontalscrollView_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:gravity="center_vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="年代：" />
+
+                <HorizontalScrollView
+                    android:id="@+id/id_horizontalscrollView_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:gravity="center_vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="地区：" />
+
+                <HorizontalScrollView
+                    android:id="@+id/id_horizontalscrollView_region"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:gravity="center_vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="排序：" />
+
+                <HorizontalScrollView
+                    android:id="@+id/id_horizontalscrollView_other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </HorizontalScrollView>
+            </LinearLayout>
+        </LinearLayout>
+    </com.guohao.custom.ExpandView>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f00" >
+    </ListView>
 
 </LinearLayout>
