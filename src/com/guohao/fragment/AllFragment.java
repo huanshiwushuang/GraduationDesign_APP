@@ -2,7 +2,9 @@ package com.guohao.fragment;
 
 import com.guohao.custom.ExpandView;
 import com.guohao.graduationdesign_app.R;
+import com.guohao.util.Util;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,6 +26,17 @@ public class AllFragment extends Fragment implements OnClickListener {
 	private TextView showTextView;
 	private LinearLayout languageLayout,typeLayout,dateLayout,regionLayout,otherLayout;
 	
+	private final String languageString = "language",
+					typeString = "type",
+					dateString = "date",
+					regionString = "region",
+					otherString = "other";
+	private TextView[] languageTextView,typeTextView,dateTextView,regionTextView,otherTextView;
+	
+	//分类---当前选中状态
+	private int languagePosition = 0,typePosition = 0,
+				datePosition = 0,regionPosition = 0,otherPosition = 0;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -37,20 +50,27 @@ public class AllFragment extends Fragment implements OnClickListener {
 		super.onActivityCreated(savedInstanceState);
 		
 		initView();
-		initLocalData(language,languageLayout);
-		initLocalData(type,typeLayout);
-		initLocalData(date,dateLayout);
-		initLocalData(region,regionLayout);
-		initLocalData(other,otherLayout);
+		initLocalData(languageString,language,languageLayout,languageTextView);
+		initLocalData(typeString,type,typeLayout,typeTextView);
+		initLocalData(dateString,date,dateLayout,dateTextView);
+		initLocalData(regionString,region,regionLayout,regionTextView);
+		initLocalData(otherString,other,otherLayout,otherTextView);
 	}
 
-	private void initLocalData(String[] array,LinearLayout layout) {
+	private void initLocalData(String flag, String[] array,LinearLayout layout,TextView[] textViews) {
 		for (int i = 0; i < array.length; i++) {
 			TextView t = new TextView(getActivity());
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			params.setMargins(5, 0, 5, 0);
 			t.setLayoutParams(params);
 			t.setText(array[i]);
+			if (i == 0) {
+				t.setTextColor(Color.parseColor("#7DCBF5"));
+			}
+			t.setOnClickListener(this);
+			//用这个标识---区分是哪一排的，方便点击事件的判断
+			t.setTag(new Object[]{flag,i});
+			textViews[i] = t;
 			layout.addView(t);
 		}
 	}
@@ -64,7 +84,13 @@ public class AllFragment extends Fragment implements OnClickListener {
 							"2009","2008","2007","2006","2005","2004及以前"};
 		region = new String[]{"全部","大陆","香港","台湾","美国","法国","英国","日本",
 							"韩国","德国","泰国","印度","意大利","西班牙","加拿大","其他"};
-		other = new String[]{"最新","特别","好评"};
+		other = new String[]{"最新","热门","好评","可播放"};
+		//--
+		languageTextView = new TextView[language.length]; 
+		typeTextView = new TextView[type.length];
+		dateTextView = new TextView[date.length];
+		regionTextView = new TextView[region.length];
+		otherTextView = new TextView[other.length];
 		//------------------------------------------------
 		languageSql = new String[]{};
 		typeSql = new String[]{};
@@ -85,12 +111,59 @@ public class AllFragment extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		if (expandView.isExpand()) {
-			showTextView.setText("显示");
-			expandView.collapse();
-		}else {
-			showTextView.setText("隐藏");
-			expandView.expand();
+		switch (v.getId()) {
+		case R.id.id_textview_show:
+			if (expandView.isExpand()) {
+				showTextView.setText("显示");
+				expandView.collapse();
+			}else {
+				showTextView.setText("隐藏");
+				expandView.expand();
+			}
+			break;
+		default :
+			Object obj = v.getTag();
+			if (obj != null) {
+				Object[] objects = (Object[]) obj;
+				String flag = (String) objects[0];
+				int index = (int) objects[1];
+				
+				switch (flag) {
+				case languageString:
+					languageTextView[languagePosition].setTextColor(Color.parseColor("#000000"));
+					languageTextView[index].setTextColor(Color.parseColor("#7DCBF5"));
+					//选中的第几个
+					languagePosition = index;
+					break;
+				case typeString:
+					typeTextView[typePosition].setTextColor(Color.parseColor("#000000"));
+					typeTextView[index].setTextColor(Color.parseColor("#7DCBF5"));
+					//选中的第几个
+					typePosition = index;
+					break;
+				case dateString:
+					dateTextView[datePosition].setTextColor(Color.parseColor("#000000"));
+					dateTextView[index].setTextColor(Color.parseColor("#7DCBF5"));
+					//选中的第几个
+					datePosition = index;
+					break;
+				case regionString:
+					regionTextView[regionPosition].setTextColor(Color.parseColor("#000000"));
+					regionTextView[index].setTextColor(Color.parseColor("#7DCBF5"));
+					//选中的第几个
+					regionPosition = index;
+					break;
+				case otherString:
+					otherTextView[otherPosition].setTextColor(Color.parseColor("#000000"));
+					otherTextView[index].setTextColor(Color.parseColor("#7DCBF5"));
+					//选中的第几个
+					otherPosition = index;
+					break;
+				}
+			}
+			break;
 		}
+		
+		
 	}
 }

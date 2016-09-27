@@ -16,7 +16,8 @@
     <com.guohao.custom.ExpandView
         android:id="@+id/id_expandview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="#e4e4e4" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,7 +36,8 @@
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none" >
 
                     <LinearLayout
                         android:id="@+id/id_linearlayout_language"
@@ -58,7 +60,8 @@
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none" >
 
                     <LinearLayout
                         android:id="@+id/id_linearlayout_type"
@@ -81,7 +84,8 @@
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none" >
 
                     <LinearLayout
                         android:id="@+id/id_linearlayout_date"
@@ -104,7 +108,8 @@
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none" >
 
                     <LinearLayout
                         android:id="@+id/id_linearlayout_region"
@@ -127,7 +132,8 @@
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none" >
 
                     <LinearLayout
                         android:id="@+id/id_linearlayout_other"
