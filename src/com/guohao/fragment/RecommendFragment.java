@@ -60,7 +60,7 @@ public class RecommendFragment extends Fragment {
 	private final String HighMark_M = "高分电影";
 	//每行多少部 电影
 	private final int LINE_COUNT = 3;
-	public static final int CLASS_COUNT = 11;
+	public static final int CLASS_COUNT = 15;
 	//存储所有-每行数据
 	private List<String> list;
 	private RecommendAdapter adapter;

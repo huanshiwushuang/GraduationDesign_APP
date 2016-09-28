@@ -73,9 +73,13 @@ public class Util {
 	//获取到大图片，因为当初获取图片时，获取的是小图片
 	public static String getBigImageAddress(String address) {
 		//http://tu80s2.b0.upaiyun.com/upload/img/201506/3168.jpg
-		int i = address.lastIndexOf(".");
-		if (i != -1 && !address.substring(i-2, i).contains("_b")) {
-			address = address.substring(0, i)+"_b"+address.substring(i, address.length());
+		if (address.endsWith("!list")) {
+			address = address.substring(0, address.length()-5);
+		}else {
+			int i = address.lastIndexOf(".");
+			if (i != -1 && !address.substring(i-2, i).contains("_b")) {
+				address = address.substring(0, i)+"_b"+address.substring(i, address.length());
+			}
 		}
 		return address;
 	}

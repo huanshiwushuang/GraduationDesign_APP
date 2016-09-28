@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -88,6 +89,7 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 							addDataToList(array);
 							msg.what = Load_Data_Success;
 						}
+						Log.d("guohao", "’‚¿Ôµƒ£∫"+want+"---"+nextLine+"---"+array.toString());
 					}else {
 						msg.what = Load_Data_Fail;
 						msg.obj = object.getString(Data.KEY_DATA);

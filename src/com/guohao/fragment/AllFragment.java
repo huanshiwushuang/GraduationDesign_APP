@@ -8,6 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.guohao.custom.ExpandView;
+import com.guohao.custom.LoadMore;
+import com.guohao.custom.LoadMore.OnLoadListener;
 import com.guohao.graduationdesign_app.MovieDetailActivity;
 import com.guohao.graduationdesign_app.R;
 import com.guohao.inter.HttpCallBackListenerString;
@@ -23,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,11 +37,13 @@ import android.widget.ListView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-public class AllFragment extends Fragment implements OnClickListener {
+public class AllFragment extends Fragment implements OnClickListener,OnLoadListener {
 	private ExpandView expandView;
 	private View view;
 	private TextView showTextView;
 	private Handler handler;
+	private LoadMore loadMore;
+	private ConditionAdapter adapter;
 	private final int Loading_Data_Success = 1;
 	private final int Loading_Data_Fail = 0;
 
@@ -48,7 +53,9 @@ public class AllFragment extends Fragment implements OnClickListener {
 			otherString = "other";
 	private TextView[] languageTextView, typeTextView, dateTextView, regionTextView, otherTextView;
 	// 每次加载多少部
-	private final int LINE_COUNT = 12;
+	private final int LINE_COUNT = 3;
+	private int startLine = 1;
+	private final int loadCountOnce = 15;
 	private List<String> list;
 	private ListView listView;
 
@@ -72,19 +79,17 @@ public class AllFragment extends Fragment implements OnClickListener {
 		initLocalData(dateString, date, dateLayout, dateTextView);
 		initLocalData(regionString, region, regionLayout, regionTextView);
 		initLocalData(otherString, other, otherLayout, otherTextView);
-		getNetworkData("1", LINE_COUNT + "", languagePosition, typePosition, datePosition, regionPosition,
-				otherPosition);
+		getNetworkData();
 		setAdapter();
 	}
 
 	private void setAdapter() {
-		ConditionAdapter adapter = new ConditionAdapter();
+		adapter = new ConditionAdapter();
 		listView.setAdapter(adapter);
 	}
 
-	private void getNetworkData(String startLine, String endLine, int languagePosition, int typePosition,
-			int datePosition, int regionPosition, int otherPosition) {
-		HttpUtil.visitMovieInfoTableCondition(startLine, endLine, languagePosition, typePosition, datePosition,
+	private void getNetworkData() {
+		HttpUtil.visitMovieInfoTableCondition(startLine, startLine+loadCountOnce-1, languagePosition, typePosition, datePosition,
 				regionPosition, otherPosition, new HttpCallBackListenerString() {
 					public void onFinish(String response) {
 						Message msg = handler.obtainMessage();
@@ -104,8 +109,13 @@ public class AllFragment extends Fragment implements OnClickListener {
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
-							msg.what = Loading_Data_Success;
-							msg.obj = array;
+							if (array == null || array.length() <= 0) {
+								msg.what = Loading_Data_Fail;
+								msg.obj = "没有更多了";
+							}else {
+								msg.what = Loading_Data_Success;
+								msg.obj = array;
+							}
 							handler.sendMessage(msg);
 						} else {
 							msg.obj = data;
@@ -167,18 +177,23 @@ public class AllFragment extends Fragment implements OnClickListener {
 		expandView = (ExpandView) view.findViewById(R.id.id_expandview);
 		showTextView = (TextView) view.findViewById(R.id.id_textview_show);
 		list = new ArrayList<String>();
+		loadMore = (LoadMore) view.findViewById(R.id.id_loadmore_condition);
+		loadMore.setOnLoadListener(this);
 		listView = (ListView) view.findViewById(R.id.id_listview_condition);
 		showTextView.setOnClickListener(this);
 		handler = new Handler() {
+			int i = 0;
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
 				case Loading_Data_Success:
 					JSONArray array = (JSONArray) msg.obj;
 					addDataToList(array);
+					loadMoreDataEnd();
 					break;
 				case Loading_Data_Fail:
 					String error = (String) msg.obj;
 					Util.showToast(getActivity(), error);
+					loadMoreDataEnd();
 					break;
 				default:
 					break;
@@ -187,7 +202,10 @@ public class AllFragment extends Fragment implements OnClickListener {
 		};
 
 	}
-
+	protected void loadMoreDataEnd() {
+        loadMore.setLoading(false);
+        Util.dismissProgressDialog();
+	}
 	private void addDataToList(JSONArray array) {
 		StringBuilder builder = new StringBuilder();
 		int j = array.length() / LINE_COUNT;
@@ -216,6 +234,7 @@ public class AllFragment extends Fragment implements OnClickListener {
 			list.add(builder.toString());
 			builder.delete(0, builder.length());
 		}
+		adapter.notifyDataSetChanged();
 	}
 
 	class ConditionAdapter extends BaseAdapter implements OnClickListener {
@@ -381,5 +400,16 @@ public class AllFragment extends Fragment implements OnClickListener {
 			}
 			break;
 		}
+	}
+
+	@Override
+	public void onLoad() {
+		loadMore.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+            	startLine += loadCountOnce;
+        		getNetworkData();
+            }
+        }, 1500);
 	}
 }

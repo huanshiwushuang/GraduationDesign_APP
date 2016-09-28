@@ -129,6 +129,7 @@ public class HttpUtil {
 						+want+"&startLine="+startLine+"&endLine="+endLine;
 				HttpURLConnection connection = HttpUtil.getGetConnection(StringUtil.urlEncode(address, Data.ENCODE));
 				BufferedReader reader = null;
+				Log.d("guohao", "年月日："+address);
 				try {
 					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 						reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -157,14 +158,15 @@ public class HttpUtil {
 			}
 		}).start();
 	}
-	public static void visitMovieInfoTableCondition(final String startLine, final String endLine, final int language, final int type, final int date, final int region, final int sort, final HttpCallBackListenerString listener) {
+	public static void visitMovieInfoTableCondition(final int startLine, final int endLine, final int language, final int type, final int date, final int region, final int order, final HttpCallBackListenerString listener) {
 		new Thread(new Runnable() {
 			
 			public void run() {
 				String address = Data.URL_MOVIE_INFO_TABLE+"?want=condition&startLine="
-						+startLine+"&endLine="+endLine+"&language="+language+"&type="+type+"&date="+date+"&region"+region+"&sort="+sort;
+						+startLine+"&endLine="+endLine+"&language="+language+"&type="+type+"&date="+date+"&region="+region+"&order="+order;
 				HttpURLConnection connection = HttpUtil.getGetConnection(StringUtil.urlEncode(address, Data.ENCODE));
 				BufferedReader reader = null;
+				Log.d("guohao", "郭浩的请求地址："+address);
 				try {
 					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 						reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
