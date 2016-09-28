@@ -127,11 +127,9 @@ public class HttpUtil {
 			public void run() {
 				String address = Data.URL_MOVIE_INFO_TABLE+"?want="
 						+want+"&startLine="+startLine+"&endLine="+endLine;
-				HttpURLConnection connection = HttpUtil.getGetConnection(StringUtil.urlEncode(address, "UTF-8"));
+				HttpURLConnection connection = HttpUtil.getGetConnection(StringUtil.urlEncode(address, Data.ENCODE));
 				BufferedReader reader = null;
 				try {
-					
-					Log.d("guohao", "¹ùºÆ£º"+StringUtil.urlEncode(address, "UTF-8")+" : "+connection.getResponseCode());
 					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 						reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 						String line = "";
@@ -144,6 +142,41 @@ public class HttpUtil {
 						listener.onError("ResponseCode£º"+connection.getResponseCode());
 					}
 					
+				} catch (IOException e) {
+					listener.onError(e.toString());
+				} finally {
+					connection.disconnect();
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}).start();
+	}
+	public static void visitMovieInfoTableCondition(final String startLine, final String endLine, final int language, final int type, final int date, final int region, final int sort, final HttpCallBackListenerString listener) {
+		new Thread(new Runnable() {
+			
+			public void run() {
+				String address = Data.URL_MOVIE_INFO_TABLE+"?want=condition&startLine="
+						+startLine+"&endLine="+endLine+"&language="+language+"&type="+type+"&date="+date+"&region"+region+"&sort="+sort;
+				HttpURLConnection connection = HttpUtil.getGetConnection(StringUtil.urlEncode(address, Data.ENCODE));
+				BufferedReader reader = null;
+				try {
+					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+						reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+						String line = "";
+						String response = "";
+						while ((line = reader.readLine()) != null) {
+							response += line;
+						}
+						listener.onFinish(response);
+					}else {
+						listener.onError("ResponseCode£º"+connection.getResponseCode());
+					}
 				} catch (IOException e) {
 					listener.onError(e.toString());
 				} finally {
