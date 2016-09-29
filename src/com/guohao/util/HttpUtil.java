@@ -166,7 +166,7 @@ public class HttpUtil {
 						+startLine+"&endLine="+endLine+"&language="+language+"&type="+type+"&date="+date+"&region="+region+"&order="+order;
 				HttpURLConnection connection = HttpUtil.getGetConnection(StringUtil.urlEncode(address, Data.ENCODE));
 				BufferedReader reader = null;
-				Log.d("guohao", "郭浩的请求地址："+address);
+				Log.d("guohao", "我的请求："+address);
 				try {
 					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 						reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));

@@ -3,9 +3,17 @@ package com.guohao.util;
 import io.vov.vitamio.MediaPlayer;
 
 public class Data {
-	public static final String URL_USER_TABLE = "http://80smovie.tk/user.gh";
-	public static final String URL_MOVIE_INFO_TABLE = "http://80smovie.tk/movieInfo.gh";
-	public static final String URL_MOVIE_PLAY_URL = "http://80smovie.tk/moviePlay.gh";
+//	public static final String URL_USER_TABLE = "http://80smovie.tk/user.gh";
+//	public static final String URL_MOVIE_INFO_TABLE = "http://80smovie.tk/movieInfo.gh";
+//	public static final String URL_MOVIE_PLAY_URL = "http://80smovie.tk/moviePlay.gh";
+	
+	public static final String URL_USER_TABLE = "http://115.159.111.179/user.gh";
+	public static final String URL_MOVIE_INFO_TABLE = "http://115.159.111.179/movieInfo.gh";
+	public static final String URL_MOVIE_PLAY_URL = "http://115.159.111.179/moviePlay.gh";
+	
+//	public static final String URL_USER_TABLE = "http://192.168.0.101:8080/GraduationDesign/user.gh";
+//	public static final String URL_MOVIE_INFO_TABLE = "http://192.168.0.101:8080/GraduationDesign/movieInfo.gh";
+//	public static final String URL_MOVIE_PLAY_URL = "http://192.168.0.101:8080/GraduationDesign/moviePlay.gh";
 	
 	public static final String ENCODE = "UTF-8";
 	

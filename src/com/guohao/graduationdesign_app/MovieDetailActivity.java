@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -69,6 +70,11 @@ public class MovieDetailActivity extends Activity {
 	}
 
 	private void getNetworkData() {
+		NetworkInfo info = Util.getNetworkInfo(MovieDetailActivity.this);
+		if (info == null || !info.isAvailable() ) {
+			Util.showToast(MovieDetailActivity.this, "ÎÞÍøÂç");
+			return;
+		}
 		Util.showProgressDialog(MovieDetailActivity.this);
 		HttpUtil.getMovieDetail(handler, id);
 	}

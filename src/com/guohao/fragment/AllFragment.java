@@ -63,8 +63,9 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 	private List<String> list;
 	private ListView listView;
 	private TextView refreshPrompt;
+	private final String NoMore = "没有更多了";
 	
-	//表名这次请求是刷新，必须要清空所有数据
+	//表明这次刷新请求，必须要清空所有数据
 	private Boolean thisIsRefresh = false;
 
 	// 分类---当前选中状态
@@ -126,7 +127,7 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 							}
 							if (array == null || array.length() <= 0) {
 								msg.what = Loading_Data_Fail;
-								msg.obj = "没有更多了";
+								msg.obj = NoMore;
 							}else {
 								msg.what = Loading_Data_Success;
 								msg.obj = array;
@@ -217,6 +218,11 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 				case Loading_Data_Fail:
 					String error = (String) msg.obj;
 					Util.showToast(getActivity(), error);
+					if (error.equals(NoMore) && thisIsRefresh) {
+						thisIsRefresh = false;
+						list.clear();
+						adapter.notifyDataSetChanged();
+					}
 					loadMoreDataEnd();
 					break;
 				default:
@@ -433,6 +439,10 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 					otherPosition = index;
 					break;
 				}
+				Util.showProgressDialog(getActivity());
+				thisIsRefresh = true;
+				startLine = 1;
+				getNetworkData();
 			}
 			break;
 		}
