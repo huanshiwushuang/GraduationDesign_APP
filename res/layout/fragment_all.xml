@@ -145,19 +145,39 @@
         </LinearLayout>
     </com.guohao.custom.ExpandView>
 
-    <com.guohao.custom.LoadMore
-        android:id="@+id/id_loadmore_condition"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#fff" >
+        android:layout_weight="1" >
 
-        <ListView
-            android:id="@+id/id_listview_condition"
+        <com.guohao.custom.LoadMore
+            android:id="@+id/id_loadmore_condition"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/id_swiperefreshlayout_refresh_condition"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <ListView
+                    android:id="@+id/id_listview_condition"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#fff" >
+                </ListView>
+            </android.support.v4.widget.SwipeRefreshLayout>
+        </com.guohao.custom.LoadMore>
+
+        <TextView
+            android:id="@+id/id_textview_refresh_prompt_condition"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff" >
-        </ListView>
-    </com.guohao.custom.LoadMore>
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="下拉刷新"
+            android:textSize="25sp"
+            android:visibility="gone" />
+    </RelativeLayout>
 
 </LinearLayout>

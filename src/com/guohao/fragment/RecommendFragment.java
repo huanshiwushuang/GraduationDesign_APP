@@ -99,6 +99,7 @@ public class RecommendFragment extends Fragment {
 			default:
 				break;
 			}
+			
 		}
 		private void setDataInList() {
 			switch (want) {
@@ -173,6 +174,9 @@ public class RecommendFragment extends Fragment {
 					@Override
 					public void run() {
 						refreshLayout.setRefreshing(false);
+						if (list.size() <= 0) {
+							refreshPrompt.setVisibility(View.VISIBLE);
+						}
 					}
 				}, 700);
 				Util.dismissProgressDialog();
@@ -230,6 +234,11 @@ public class RecommendFragment extends Fragment {
 		});
 	}
 	private void getData(final String want, final String startLine, final String endLine) {
+		if (info == null || !info.isAvailable() ) {
+			refreshLayout.setRefreshing(false);
+			Util.showToast(getActivity(), "ÎÞÍøÂç");
+			return;
+		}
 		HttpUtil.visitMovieInfoTable(want, startLine, endLine, new HttpCallBackListenerString() {
 			
 			public void onFinish(String response) {

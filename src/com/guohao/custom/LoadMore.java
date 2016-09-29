@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
@@ -48,15 +49,23 @@ public class LoadMore extends LinearLayout implements OnScrollListener {
         }
     }
     private void getListView() {
-        int childs = getChildCount();
-        if (childs > 0) {
-            View childView = getChildAt(0);
-            if (childView instanceof ListView) {
-                mListView = (ListView) childView;
-                // 设置滚动监听器给ListView, 使得滚动的情况下也可以自动加载
-                mListView.setOnScrollListener(this);
-            }
-        }
+//        int childs = getChildCount();
+    	ViewGroup group = this; 
+    	while (true) {
+        	int childs = group.getChildCount();
+        	if (childs > 0) {
+        		View childView = group.getChildAt(0);
+				if (childView instanceof ListView) {
+                    mListView = (ListView) childView;
+                    // 设置滚动监听器给ListView, 使得滚动的情况下也可以自动加载
+                    mListView.setOnScrollListener(this);
+                    break;
+                }
+				group = (ViewGroup) childView;
+			}else {
+				break;
+			}
+		}
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -102,9 +111,13 @@ public class LoadMore extends LinearLayout implements OnScrollListener {
     public void setLoading(boolean loading) {
         isLoading = loading;
         if (isLoading) {
-            mListView.addFooterView(mListViewFooter);
+            if (mListView != null) {
+            	mListView.addFooterView(mListViewFooter);
+			}
         } else {
-            mListView.removeFooterView(mListViewFooter);
+            if (mListView != null) {
+            	mListView.removeFooterView(mListViewFooter);
+			}
             mDownY = 0;
             mMoveY = 0;
         }

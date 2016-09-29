@@ -292,6 +292,12 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 
 	@Override
 	public void onLoad() {
+		NetworkInfo info = Util.getNetworkInfo(MoreMovieActivity.this);
+		if (info == null || !info.isAvailable() ) {
+			loadMoreDataEnd();
+			Util.showToast(MoreMovieActivity.this, "ÎÞÍøÂç");
+			return;
+		}
         loadMore.postDelayed(new Runnable() {
             @Override
             public void run() {

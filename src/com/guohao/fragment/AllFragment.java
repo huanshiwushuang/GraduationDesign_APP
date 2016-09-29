@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.guohao.custom.ExpandView;
 import com.guohao.custom.LoadMore;
 import com.guohao.custom.LoadMore.OnLoadListener;
+import com.guohao.graduationdesign_app.MoreMovieActivity;
 import com.guohao.graduationdesign_app.MovieDetailActivity;
 import com.guohao.graduationdesign_app.R;
 import com.guohao.inter.HttpCallBackListenerString;
@@ -25,6 +26,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,13 +40,14 @@ import android.widget.ListView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-public class AllFragment extends Fragment implements OnClickListener,OnLoadListener {
+public class AllFragment extends Fragment implements OnClickListener,OnLoadListener,OnRefreshListener {
 	private ExpandView expandView;
 	private View view;
 	private TextView showTextView;
 	private Handler handler;
 	private LoadMore loadMore;
 	private ConditionAdapter adapter;
+	private SwipeRefreshLayout refreshLayout;
 	private final int Loading_Data_Success = 1;
 	private final int Loading_Data_Fail = 0;
 
@@ -58,6 +62,10 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 	private final int loadCountOnce = 15;
 	private List<String> list;
 	private ListView listView;
+	private TextView refreshPrompt;
+	
+	//表名这次请求是刷新，必须要清空所有数据
+	private Boolean thisIsRefresh = false;
 
 	// 分类---当前选中状态
 	private int languagePosition = 0, typePosition = 0, datePosition = 0, regionPosition = 0, otherPosition = 0;
@@ -89,6 +97,13 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 	}
 
 	private void getNetworkData() {
+		NetworkInfo info = Util.getNetworkInfo(getActivity());
+		if (info == null || !info.isAvailable() ) {
+			refreshLayout.setRefreshing(false);
+			Util.showToast(getActivity(), "无网络");
+			refreshPrompt.setVisibility(View.VISIBLE);
+			return;
+		}
 		HttpUtil.visitMovieInfoTableCondition(startLine, startLine+loadCountOnce-1, languagePosition, typePosition, datePosition,
 				regionPosition, otherPosition, new HttpCallBackListenerString() {
 					public void onFinish(String response) {
@@ -181,12 +196,21 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 		loadMore.setOnLoadListener(this);
 		listView = (ListView) view.findViewById(R.id.id_listview_condition);
 		showTextView.setOnClickListener(this);
+		refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.id_swiperefreshlayout_refresh_condition);
+		refreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
+		refreshLayout.setOnRefreshListener(this);
+		refreshPrompt = (TextView) view.findViewById(R.id.id_textview_refresh_prompt_condition);
 		handler = new Handler() {
 			int i = 0;
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
 				case Loading_Data_Success:
 					JSONArray array = (JSONArray) msg.obj;
+					//如果这次是刷新请求
+					if (thisIsRefresh) {
+						thisIsRefresh = false;
+						list.clear();
+					}
 					addDataToList(array);
 					loadMoreDataEnd();
 					break;
@@ -198,6 +222,18 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 				default:
 					break;
 				}
+				
+				if (list.size() <= 0) {
+					refreshPrompt.setVisibility(View.VISIBLE);
+				}else {
+					refreshPrompt.setVisibility(View.GONE);
+				}
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						refreshLayout.setRefreshing(false);
+					}
+				}, 700);
 			}
 		};
 
@@ -404,6 +440,17 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 
 	@Override
 	public void onLoad() {
+		if (list.size() <= 0) {
+			Util.showToast(getActivity(), "请下拉刷新");
+			loadMoreDataEnd();
+			return;
+		}
+		NetworkInfo info = Util.getNetworkInfo(getActivity());
+		if (info == null || !info.isAvailable() ) {
+			loadMoreDataEnd();
+			Util.showToast(getActivity(), "无网络");
+			return;
+		}
 		loadMore.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -411,5 +458,17 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
         		getNetworkData();
             }
         }, 1500);
+	}
+	@Override
+	public void onRefresh() {
+		NetworkInfo info = Util.getNetworkInfo(getActivity());
+		if (info == null || !info.isAvailable() ) {
+			refreshLayout.setRefreshing(false);
+			Util.showToast(getActivity(), "无网络");
+			return;
+		}
+		startLine = 1;
+		thisIsRefresh = true;
+		getNetworkData(); 
 	}
 }
