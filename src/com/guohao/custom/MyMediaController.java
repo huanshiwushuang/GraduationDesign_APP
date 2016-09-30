@@ -59,6 +59,8 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	private Boolean IsLoadEnd = true;
 	//正在加载
 	private Boolean isLoading = false;
+	//是否准备好了
+	private Boolean IsPrepared = false;
 	
 	// videoview 用于对视频进行控制的等，activity用处较大
 	public MyMediaController(VideoView videoView, Activity activity) {
@@ -140,6 +142,7 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	public void onPrepared(MediaPlayer mp) {
 		Log.d("guohao", "最大的："+(int)videoView.getDuration());
 		seekBar.setMax((int)videoView.getDuration());
+		IsPrepared = true;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -197,6 +200,11 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		//这里必须判断，因为在子线程中让 SeekBar 跟随VideoView 播放进度自动前进的时候，是代码控制？？？？
 		if (fromUser) {
+			if (!IsPrepared) {
+				Util.showToast(activity, "正在加载...");
+				seekBar.setProgress(0);
+				return;
+			}
 			show();
 			LastSeek = progress;
 			videoView.seekTo(progress);

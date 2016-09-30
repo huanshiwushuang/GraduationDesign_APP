@@ -73,6 +73,7 @@
         <activity 
             android:name="com.guohao.graduationdesign_app.MoviePlayActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
+            android:process=":vitamio"
             android:configChanges="orientation|keyboardHidden|screenSize" 
 			android:screenOrientation="sensorLandscape">
             

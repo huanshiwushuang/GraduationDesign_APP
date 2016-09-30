@@ -5,9 +5,10 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Vitamio"/>
 	<classpathentry exported="true" kind="lib" path="libs/android-support-v4.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/android-support-v7-gridlayout.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/cia_sdk_v_2_3_1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/universal-image-loader-1.9.5.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Vitamio"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
