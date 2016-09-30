@@ -33,8 +33,7 @@
                     android:layout_marginRight="3dp"
                     android:background="#f00"
                     android:contentDescription="图片"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/test_pic" />
+                    android:scaleType="fitXY" />
 
                 <LinearLayout
                     android:id="@+id/id_linearlayout_introduce"

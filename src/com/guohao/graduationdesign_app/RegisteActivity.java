@@ -37,6 +37,13 @@ public class RegisteActivity extends Activity implements OnClickListener {
 	private Button registeButton;
 	private EditText account,pwd,pwd2;
 	private Handler handler;
+	private Boolean isRegiste = false;
+	private final int Registe = 0;
+	private final int Login = 1;
+	
+	private String accountString;
+	private String pwdString;
+	private String pwd2String;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +62,47 @@ public class RegisteActivity extends Activity implements OnClickListener {
 		
 		handler = new Handler() {
 			public void handleMessage(android.os.Message msg) {
-				JSONObject object;
-				try {
-					object = new JSONObject(String.valueOf(msg.obj));
-					String code = object.getString(Data.KEY_CODE);
-					
-					finish();
-					if (code.equals(Data.VALUE_OK)) {
-						showToast(object.getString(Data.KEY_DATA)+"，请登录");
-					}else {
-						showToast(object.getString(Data.KEY_DATA));
+				JSONObject object = null;
+				switch (msg.what) {
+				case Login:
+					try {
+						object = new JSONObject(String.valueOf(msg.obj));
+						String code = object.getString(Data.KEY_CODE);
+						
+						if (code.equals(Data.VALUE_OK)) {
+							Util.showToast(RegisteActivity.this, "该账号已注册");
+							Util.dismissProgressDialog();
+							finish();
+						}else {
+							Util.setMessage("正在注册...");
+							sendVerificationRequest(accountString,pwdString);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+						Util.dismissProgressDialog();
+						Util.showToast(RegisteActivity.this, e.toString());
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+					break;
+				case Registe:
+					try {
+						object = new JSONObject(String.valueOf(msg.obj));
+						String code = object.getString(Data.KEY_CODE);
+						
+						if (code.equals(Data.VALUE_OK)) {
+							Util.showToast(RegisteActivity.this, object.getString(Data.KEY_DATA)+"，请登录");
+						}else {
+							Util.showToast(RegisteActivity.this, object.getString(Data.KEY_DATA));
+						}
+						Util.dismissProgressDialog();
+						finish();
+					} catch (JSONException e) {
+						e.printStackTrace();
+						Util.dismissProgressDialog();
+						Util.showToast(RegisteActivity.this, e.toString());
+					}
+					break;
+				default:
+					break;
 				}
 			}
 		};
@@ -76,6 +111,9 @@ public class RegisteActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.id_button_registe:
+			accountString = account.getText().toString();
+			pwdString = pwd.getText().toString();
+			pwd2String = pwd2.getText().toString();
 			registe();
 			break;
 		default:
@@ -86,33 +124,54 @@ public class RegisteActivity extends Activity implements OnClickListener {
 	
 	private void registe() {
 		if (!haveNetWork()) {
-			showToast("无网络");
+			Util.showToast(RegisteActivity.this, "无网络");
 			return;
 		}
 		
-		String accountString = account.getText().toString();
-		String pwdString = pwd.getText().toString();
-		String pwd2String = pwd2.getText().toString();
 		if (Util.isEmpty(accountString) || Util.isEmpty(pwdString) || Util.isEmpty(pwd2String)) {
-			showToast("不能为空");
+			Util.showToast(RegisteActivity.this, "不能为空");
 			return;
 		}
 		Matcher matcher = Pattern.compile("\\d{11}").matcher(accountString);
 		if (!matcher.find()) {
-			showToast("手机号错误");
+			Util.showToast(RegisteActivity.this, "手机号错误");
 			return;
 		}
 		if (pwdString.length() > 20 || pwdString.length() < 6) {
-			showToast("密码长度错误");
+			Util.showToast(RegisteActivity.this, "密码长度错误");
 			return;
 		}
 		if (!pwdString.equals(pwd2String)) {
-			showToast("两次密码不相同");
+			Util.showToast(RegisteActivity.this, "两次密码不相同");
 			return;
 		}
-		
-		Util.showProgressDialog(this, "正在验证手机号...");
-		sendVerificationRequest(accountString,pwdString);
+		//欠缺注册的验证，之前是否注册过了
+		Util.showProgressDialog(this, "正在检查账户...");
+		selectAccount(accountString,pwdString);
+	}
+
+	private void selectAccount(final String account, final String pwd) {
+		UserTable user = new UserTable();
+		user.setUserId(account);
+		user.setUsername(System.nanoTime()+"");
+		user.setUserPwd(pwd);
+		HttpUtil.visitUserTable(HttpUtil.VISIT_USER_TABLE_LOGIN, Data.URL_USER_TABLE, user, new HttpCallBackListenerString() {
+			@Override
+			public void onFinish(String response) {
+				Message msg = handler.obtainMessage();
+				msg.obj = response;
+				msg.what = Login;
+				handler.sendMessage(msg);
+			}
+			@Override
+			public void onError(String e) {
+				Util.dismissProgressDialog();
+				Looper.prepare();
+				finish();
+				Util.showToast(RegisteActivity.this, e);
+				Looper.loop();
+			}
+		});
 	}
 
 	private void sendVerificationRequest(final String phoneNumber, final String pwd) {
@@ -123,8 +182,8 @@ public class RegisteActivity extends Activity implements OnClickListener {
                 switch (status) {
                     case CIAService.VERIFICATION_SUCCESS: // 验证成功
                         // TODO 进入下一步业务逻辑
-                    	Util.dismissProgressDialog();
-                        showToast("验证成功");
+                    	
+                        Util.showToast(RegisteActivity.this, "验证成功");
                         //插入数据库。
                         startRegiste(phoneNumber,pwd);
                         break;
@@ -132,26 +191,27 @@ public class RegisteActivity extends Activity implements OnClickListener {
                         // 进入输入验证码的页面，并提示用户输入验证码
                     	Util.dismissProgressDialog();
                     	VerificationActivity.actionStart(RegisteActivity.this, phoneNumber, pwd, VerificationActivity.REGISTE_ACCOUNT);
-                    	showToast("已拨打验证电话至："+phoneNumber);
+                    	Util.showToast(RegisteActivity.this, "已拨打验证电话至："+phoneNumber);
+                    	finish();
                         break;
                     case CIAService.VERIFICATION_FAIL:
                     	Util.dismissProgressDialog();
-                        showToast("验证失败：" + msg);
+                        Util.showToast(RegisteActivity.this, "验证失败：" + msg);
                         break;
                     case CIAService.REQUEST_EXCEPTION:
                     	Util.dismissProgressDialog();
-                        showToast("请求异常：" + msg);
+                        Util.showToast(RegisteActivity.this, "请求异常：" + msg);
                         break;
                     default:
-                        // 服务器返回的错误
-                        showToast(msg);
+                        // 服务器返回的信息
+                        Util.showToast(RegisteActivity.this, msg);
+                        break;
                 }
             }
         });
 	}
 
 	protected void startRegiste(String account, String pwd) {
-		Util.showProgressDialog(RegisteActivity.this, "正在注册...");
 		UserTable user = new UserTable();
 		user.setUserId(account);
 		user.setUsername(System.nanoTime()+"");
@@ -162,6 +222,7 @@ public class RegisteActivity extends Activity implements OnClickListener {
 				Util.dismissProgressDialog();
 				Message msg = handler.obtainMessage();
 				msg.obj = response;
+				msg.what = Registe;
 				handler.sendMessage(msg);
 			}
 			
@@ -169,7 +230,7 @@ public class RegisteActivity extends Activity implements OnClickListener {
 				Util.dismissProgressDialog();
 				Looper.prepare();
 				finish();
-				showToast(e);
+				Util.showToast(RegisteActivity.this, e);
 				Looper.loop();
 			}
 		});
@@ -180,9 +241,6 @@ public class RegisteActivity extends Activity implements OnClickListener {
 		context.startActivity(intent);
 	}
 	
-	private void showToast(String msg) {
-		Toast.makeText(RegisteActivity.this, msg, Toast.LENGTH_SHORT).show();
-	}
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

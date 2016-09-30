@@ -69,6 +69,11 @@ public class Util {
 	public static Boolean isShowingProgressDialog() {
 		return progressDialog.isShowing();
 	}
+	public static void setMessage(String msg) {
+		if (progressDialog != null) {
+			progressDialog.setMessage(msg);
+		}
+	}
 	
 	//获取到大图片，因为当初获取图片时，获取的是小图片
 	public static String getBigImageAddress(String address) {
