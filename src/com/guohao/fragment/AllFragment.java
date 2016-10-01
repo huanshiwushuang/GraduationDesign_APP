@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import com.guohao.custom.ExpandView;
 import com.guohao.custom.LoadMore;
 import com.guohao.custom.LoadMore.OnLoadListener;
-import com.guohao.graduationdesign_app.MoreMovieActivity;
 import com.guohao.graduationdesign_app.MovieDetailActivity;
 import com.guohao.graduationdesign_app.R;
 import com.guohao.inter.HttpCallBackListenerString;
@@ -34,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -41,6 +41,16 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class AllFragment extends Fragment implements OnClickListener,OnLoadListener,OnRefreshListener {
+	private final int Loading_Data_Success = 1;
+	private final int Loading_Data_Fail = 0;
+	private final String NoMore = "没有更多了";
+	private final String languageString = "language", typeString = "type", dateString = "date", regionString = "region",
+			otherString = "other";
+	private final int LINE_COUNT = 3;
+	private int startLine = 1;
+	// 每次加载多少部
+	private final int loadCountOnce = 15;
+	
 	private ExpandView expandView;
 	private View view;
 	private TextView showTextView;
@@ -48,26 +58,18 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 	private LoadMore loadMore;
 	private ConditionAdapter adapter;
 	private SwipeRefreshLayout refreshLayout;
-	private final int Loading_Data_Success = 1;
-	private final int Loading_Data_Fail = 0;
 
 	private LinearLayout languageLayout, typeLayout, dateLayout, regionLayout, otherLayout;
 	private String[] language, type, date, region, other;
-	private final String languageString = "language", typeString = "type", dateString = "date", regionString = "region",
-			otherString = "other";
+	
 	private TextView[] languageTextView, typeTextView, dateTextView, regionTextView, otherTextView;
-	// 每次加载多少部
-	private final int LINE_COUNT = 3;
-	private int startLine = 1;
-	private final int loadCountOnce = 15;
+	
 	private List<String> list;
 	private ListView listView;
+	private View mListViewFooter;
 	private TextView refreshPrompt;
-	private final String NoMore = "没有更多了";
-	
 	//表明这次刷新请求，必须要清空所有数据
 	private Boolean thisIsRefresh = false;
-
 	// 分类---当前选中状态
 	private int languagePosition = 0, typePosition = 0, datePosition = 0, regionPosition = 0, otherPosition = 0;
 
@@ -91,9 +93,9 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 		getNetworkData();
 		setAdapter();
 	}
-
+	
 	private void setAdapter() {
-		adapter = new ConditionAdapter();
+        listView.addFooterView(mListViewFooter, null, false);
 		listView.setAdapter(adapter);
 	}
 
@@ -190,17 +192,23 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 		regionLayout = (LinearLayout) view.findViewById(R.id.id_linearlayout_region);
 		otherLayout = (LinearLayout) view.findViewById(R.id.id_linearlayout_other);
 		// ------------------------------------------------
+		adapter = new ConditionAdapter();
+		mListViewFooter = LayoutInflater.from(getActivity()).inflate(R.layout.listview_footer, null);
+        mListViewFooter.setVisibility(View.GONE);
+		// ------------------------------------------------
 		expandView = (ExpandView) view.findViewById(R.id.id_expandview);
 		showTextView = (TextView) view.findViewById(R.id.id_textview_show);
 		list = new ArrayList<String>();
 		loadMore = (LoadMore) view.findViewById(R.id.id_loadmore_condition);
-		loadMore.setOnLoadListener(this);
+		loadMore.setOnLoadListener(this,mListViewFooter);
 		listView = (ListView) view.findViewById(R.id.id_listview_condition);
 		showTextView.setOnClickListener(this);
 		refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.id_swiperefreshlayout_refresh_condition);
 		refreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
 		refreshLayout.setOnRefreshListener(this);
 		refreshPrompt = (TextView) view.findViewById(R.id.id_textview_refresh_prompt_condition);
+		// ------------------------------------------------
+		
 		handler = new Handler() {
 			int i = 0;
 			public void handleMessage(Message msg) {

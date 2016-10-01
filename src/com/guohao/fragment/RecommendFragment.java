@@ -15,36 +15,26 @@ import com.guohao.graduationdesign_app.R;
 import com.guohao.inter.HttpCallBackListenerString;
 import com.guohao.util.Data;
 import com.guohao.util.HttpUtil;
-import com.guohao.util.StringUtil;
 import com.guohao.util.Util;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.content.Context;
-import android.content.SharedPreferences.Editor;
-import android.media.Image;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class RecommendFragment extends Fragment {
 	private ListView listView;

@@ -37,6 +37,7 @@ import android.widget.TextView;
 public class MoreMovieActivity extends Activity implements OnLoadListener {
 	private String want;
 	private ListView listView;
+	private View listviewFooter;
 	private LoadMore loadMore;
 	//根据 RecommendFragment 中的加载的电影数量，决定这里加载从 第几部开始
 	private int startLine;
@@ -262,9 +263,14 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 		listView = (ListView) findViewById(R.id.id_listview_more_movie);
 		list = new ArrayList<String>();
 		loadMore = (LoadMore) findViewById(R.id.id_loadmore);
+		
+		listviewFooter = LayoutInflater.from(MoreMovieActivity.this).inflate(R.layout.listview_footer, null);
+		listviewFooter.setVisibility(View.GONE);
 		adapter = new MoreAdapter();
+		
+		listView.addFooterView(listviewFooter, null, false);
 		listView.setAdapter(adapter);
-		loadMore.setOnLoadListener(this);
+		loadMore.setOnLoadListener(this,listviewFooter);
 		titleTextView = (TextView) findViewById(R.id.id_textview_more_title);
 		
 		handler = new Handler() {

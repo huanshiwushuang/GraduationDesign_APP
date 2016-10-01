@@ -3,7 +3,6 @@ package com.guohao.custom;
 import com.guohao.graduationdesign_app.R;
 
 import android.content.Context;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.FrameLayout;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,14 +23,13 @@ import android.widget.ListView;
  */
 public class LoadMore extends LinearLayout implements OnScrollListener {
     private ListView mListView;
-    private View mListViewFooter;
-    
     private OnLoadListener mOnLoadListener;
     private int mTouchSlop;
     
     private int mDownY;
     private int mMoveY;
     private boolean isLoading = false;
+    private View listviewFooter;
 
     public LoadMore(Context context) {
         this(context, null);
@@ -38,7 +37,6 @@ public class LoadMore extends LinearLayout implements OnScrollListener {
     public LoadMore(Context context, AttributeSet attrs) {
         super(context, attrs);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-        mListViewFooter = LayoutInflater.from(context).inflate(R.layout.listview_footer, null);
     }
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -49,7 +47,6 @@ public class LoadMore extends LinearLayout implements OnScrollListener {
         }
     }
     private void getListView() {
-//        int childs = getChildCount();
     	ViewGroup group = this; 
     	while (true) {
         	int childs = group.getChildCount();
@@ -92,7 +89,6 @@ public class LoadMore extends LinearLayout implements OnScrollListener {
         return isBottom() && !isLoading && isPullUp();
     }
     private boolean isBottom() {
-
         if (mListView != null && mListView.getAdapter() != null) {
             return mListView.getLastVisiblePosition() == (mListView.getAdapter().getCount() - 1);
         }
@@ -111,23 +107,19 @@ public class LoadMore extends LinearLayout implements OnScrollListener {
     public void setLoading(boolean loading) {
         isLoading = loading;
         if (isLoading) {
-            if (mListView != null) {
-            	mListView.addFooterView(mListViewFooter);
-			}
-        } else {
-            if (mListView != null) {
-            	mListView.removeFooterView(mListViewFooter);
-			}
-            mDownY = 0;
+        	listviewFooter.setVisibility(View.VISIBLE);
+        }else {
+        	listviewFooter.setVisibility(View.GONE);
+        	mDownY = 0;
             mMoveY = 0;
-        }
+		}
     }
-    public void setOnLoadListener(OnLoadListener loadListener) {
+    public void setOnLoadListener(OnLoadListener loadListener, View mListViewFooter) {
         mOnLoadListener = loadListener;
+        listviewFooter = mListViewFooter;
     }
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-
     }
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
