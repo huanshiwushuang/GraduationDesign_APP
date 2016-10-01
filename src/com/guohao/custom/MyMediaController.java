@@ -5,7 +5,8 @@ import com.guohao.util.Util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Color;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -13,9 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -98,6 +96,7 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 		videoView.setOnSeekCompleteListener(this);
 		videoView.setOnBufferingUpdateListener(this);
 		videoView.setOnInfoListener(this);
+		videoView.setOnCompletionListener(this);
 		v.setOnTouchListener(this);
 	}
 	
@@ -184,6 +183,7 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	    	Log.d("guohao", "结束缓冲");
 	      break;
 	    case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
+	    	flowTextView.setVisibility(View.VISIBLE);
 	    	flowTextView.setText(extra+"kb/s");
 	    	Log.d("guohao", "缓冲速度："+extra);
 	      break;
@@ -192,7 +192,20 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	}
 	@Override
 	public void onCompletion(MediaPlayer mp) {
-		statusImageView.setImageResource(R.drawable.mediacontroller_play);
+//		statusImageView.setImageResource(R.drawable.mediacontroller_play);
+//		seekBar.setProgress(0);
+//		flowTextView.setVisibility(View.INVISIBLE);
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setTitle("提示");
+		builder.setMessage("视频播放结束");
+		builder.setCancelable(false);
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				activity.finish();
+			}
+		});
+		builder.show();
 	}
 	//------------------------------------------------------------------------------
 	//SeekBar 改变事件
@@ -254,7 +267,7 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 			}
 		}
 	}
-	private void play() {
+	public void play() {
 		if (isLoading) {
 			Util.showToast(activity, "正在加载...");
 			return;
@@ -262,9 +275,12 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 		videoView.start();
 		statusImageView.setImageResource(R.drawable.mediacontroller_pause);
 	}
-	private void pause() {
+	public void pause() {
 		videoView.pause();
 		statusImageView.setImageResource(R.drawable.mediacontroller_play);
+	}
+	public Boolean isLoading() {
+		return isLoading;
 	}
 	//------------------------------------------------------------------------------
 	//显示电影名字。  疑惑：使用 Vitamio 的方法设置文件名，不行？

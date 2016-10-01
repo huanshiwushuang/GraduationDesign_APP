@@ -166,7 +166,23 @@ public class MoviePlayActivity extends Activity {
 		intent.putExtra("playUrl", playUrl);
 		c.startActivity(intent);
 	}
-	
+	@Override
+	protected void onResume() {
+		if (!controller.isLoading()) {
+			controller.play();
+		}
+		super.onResume();
+	}
+	@Override
+	protected void onPause() {
+		controller.pause();
+		super.onPause();
+	}
+	@Override
+	protected void onStop() {
+		controller.pause();
+		super.onStop();
+	}
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
