@@ -60,7 +60,7 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_more_movie);
-		Util.showProgressDialog(this);
+		Util.showProgressDialog(MoreMovieActivity.this);
 		initData();
 		initView();
 		setBaseData();

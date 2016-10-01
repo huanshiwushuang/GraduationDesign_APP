@@ -1,8 +1,6 @@
 package com.guohao.util;
 
-import java.util.List;
 
-import com.guohao.graduationdesign_app.LoginActivity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -13,15 +11,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class Util {
 	private static ProgressDialog progressDialog;
-	private static ProgressBar progressBar;
 	
 	public static boolean isEmpty(String string) {
 		if (string == null || string.equals("")) {
@@ -30,7 +25,7 @@ public class Util {
 		return false;
 	}
 	public static void showProgressDialog(Context context,String msg) {
-		if (progressBar == null) {
+		if (progressDialog == null || !progressDialog.equals(context)) {
 			progressDialog = new ProgressDialog(context);
 		}
 		progressDialog.setMessage(msg);
@@ -38,7 +33,7 @@ public class Util {
 		progressDialog.show();
 	}
 	public static void showProgressDialog(Context context) {
-		if (progressBar == null) {
+		if (progressDialog == null || !progressDialog.equals(context)) {
 			progressDialog = new ProgressDialog(context);
 		}
 		progressDialog.setMessage("ÕýÔÚ¼ÓÔØ...");
@@ -51,7 +46,7 @@ public class Util {
 		}
 	}
 	public static ProgressDialog getProgressDialog(Context context) {
-		if (progressDialog == null) {
+		if (progressDialog == null || !progressDialog.equals(context)) {
 			progressDialog = new ProgressDialog(context);
 		}
 		progressDialog.setCancelable(false);
@@ -59,7 +54,7 @@ public class Util {
 		return progressDialog;
 	}
 	public static ProgressDialog getProgressDialog(Context context,String msg) {
-		if (progressDialog == null) {
+		if (progressDialog == null || !progressDialog.equals(context)) {
 			progressDialog = new ProgressDialog(context);
 		}
 		progressDialog.setCancelable(false);
@@ -67,7 +62,10 @@ public class Util {
 		return progressDialog;
 	}
 	public static Boolean isShowingProgressDialog() {
-		return progressDialog.isShowing();
+		if (progressDialog != null) {
+			return progressDialog.isShowing();
+		}
+		return false;
 	}
 	public static void setMessage(String msg) {
 		if (progressDialog != null) {
