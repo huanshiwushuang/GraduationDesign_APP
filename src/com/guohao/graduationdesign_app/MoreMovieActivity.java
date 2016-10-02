@@ -40,7 +40,6 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	private View listviewFooter;
 	private LoadMore loadMore;
 	//根据 RecommendFragment 中的加载的电影数量，决定这里加载从 第几部开始
-	private int startLine;
 	private int nextLine;
 	//每次加载的数量，根据这个 和 startLine ，决定加载第几条到第几条的数据。
 	private final int loadCountOnce = 15;
@@ -58,6 +57,8 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	
 	private String searchCondition = "";
 	private String searchValue = "";
+	
+	private final String noMore = "没有更多了";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +89,9 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 						int i = array.length();
 						if (i <= 0) {
 							msg.what = Load_Data_Fail;
-							msg.obj = "没有更多了";
+							msg.obj = noMore;
 						}else {
-							addDataToList(array);
+							msg.obj = array;
 							msg.what = Load_Data_Success;
 						}
 						Log.d("guohao", "这里的："+want+"---"+nextLine+"---"+array.toString());
@@ -110,43 +111,9 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 				msg.obj = e;
 				handler.sendMessage(msg);
 			}
-			
-			private void addDataToList(JSONArray array) {
-				StringBuilder builder = new StringBuilder();
-				int j = array.length()/LINE_COUNT;
-				int k = array.length()%LINE_COUNT;
-				//每类-有这么多行（比如热门电影）
-				int m = (k == 0 ? j : j+1);
-				//每类-最后一行有多少个
-				int p = (k == 0 ? LINE_COUNT : k);
-				//每排的个数
-				int o = LINE_COUNT;
-				for (int i = 0; i < m; i++) {
-					j = i*LINE_COUNT;
-					o = (i == m-1 ? p : LINE_COUNT);
-					builder.append("[");
-					for (int n = j; n < j+o; n++) {
-						try {
-							builder.append(array.get(n).toString());
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						if (n != j+o-1) {
-							builder.append(",");
-						}
-					}
-					builder.append("]");
-					list.add(builder.toString());
-					builder.delete(0, builder.length());
-				}
-			}
 		});
 	}
 
-	private void setData() {
-		adapter.notifyDataSetChanged();
-	}
-	
 	class MoreAdapter extends BaseAdapter implements OnClickListener {
 		Activity mActivity = null;
 		
@@ -280,7 +247,8 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 			public void handleMessage(android.os.Message msg) {
 				switch (msg.what) {
 				case Load_Data_Success:
-					setData();
+					JSONArray array = (JSONArray) msg.obj;
+					addDataToList(array);
 					loadMoreDataEnd();
 					break;
 				case Load_Data_Fail:
@@ -292,6 +260,36 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 					loadMoreDataEnd();
 					break;
 				}
+			}
+			private void addDataToList(JSONArray array) {
+				StringBuilder builder = new StringBuilder();
+				int j = array.length()/LINE_COUNT;
+				int k = array.length()%LINE_COUNT;
+				//每类-有这么多行（比如热门电影）
+				int m = (k == 0 ? j : j+1);
+				//每类-最后一行有多少个
+				int p = (k == 0 ? LINE_COUNT : k);
+				//每排的个数
+				int o = LINE_COUNT;
+				for (int i = 0; i < m; i++) {
+					j = i*LINE_COUNT;
+					o = (i == m-1 ? p : LINE_COUNT);
+					builder.append("[");
+					for (int n = j; n < j+o; n++) {
+						try {
+							builder.append(array.get(n).toString());
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						if (n != j+o-1) {
+							builder.append(",");
+						}
+					}
+					builder.append("]");
+					list.add(builder.toString());
+					builder.delete(0, builder.length());
+				}
+				adapter.notifyDataSetChanged();
 			}
 		};
 	}
@@ -325,8 +323,7 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 		Intent intent = getIntent();
 		want = intent.getStringExtra("want");
 		
-		startLine = RecommendFragment.CLASS_COUNT+1;
-		nextLine = startLine;
+		nextLine = RecommendFragment.CLASS_COUNT+1;
 		switch (want) {
 		case Data.Recommend:
 			titleStr = "推荐电影";
