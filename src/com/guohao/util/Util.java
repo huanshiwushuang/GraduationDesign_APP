@@ -164,8 +164,8 @@ public class Util {
                 }  
             }else{  
                 oldMsg = message ;  
-                toast.setText(message) ;  
-                toast.show() ;  
+                toast = Toast.makeText(context, message, Toast.LENGTH_SHORT); 
+                toast.show();
             }  
         }  
         oneTime = twoTime ;  

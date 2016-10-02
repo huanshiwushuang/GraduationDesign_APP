@@ -91,7 +91,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 	private void login() {
 		NetworkInfo info = Util.getNetworkInfo(LoginActivity.this);
-		if (info != null && !info.isAvailable()) {
+		if (info == null || !info.isAvailable()) {
 			Util.showToast(LoginActivity.this, "ÎÞÍøÂç");
 			return;
 		}
