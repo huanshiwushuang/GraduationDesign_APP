@@ -240,6 +240,17 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 	@Override
 	public boolean onError(MediaPlayer mp, int what, int extra) {
 		Log.d("guohao", "错误："+extra+"---"+what);
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setTitle("提示");
+		builder.setMessage("视频播放错误："+what+"："+extra);
+		builder.setCancelable(false);
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				activity.finish();
+			}
+		});
+		builder.show();
 		return true;
 	}
 	//------------------------------------------------------------------------------

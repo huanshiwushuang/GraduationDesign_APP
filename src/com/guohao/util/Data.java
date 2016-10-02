@@ -27,6 +27,7 @@ public class Data {
 	public static final String Hot = "hot";
 	public static final String Newest = "newest";
 	public static final String HighMark = "highMark";
+	public static final String Search = "search";
 	
 	public static final String MOVIE_TV = "TV";
 	public static final String MOVIE_1024P = "1024P";
@@ -65,7 +66,7 @@ public class Data {
 	public static final String K_Player = "0";
 	public static final int V_Player_Default = 1;
 	public static final int V_Player_Vitamio = 2;
-	
+	//视频播放缓冲大小
 	
 	
 }

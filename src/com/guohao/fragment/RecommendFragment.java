@@ -229,7 +229,7 @@ public class RecommendFragment extends Fragment {
 			Util.showToast(getActivity(), "ÎÞÍøÂç");
 			return;
 		}
-		HttpUtil.visitMovieInfoTable(want, startLine, endLine, new HttpCallBackListenerString() {
+		HttpUtil.visitMovieInfoTable(want, startLine, endLine, "", "", new HttpCallBackListenerString() {
 			
 			public void onFinish(String response) {
 				Message msg = handler.obtainMessage();

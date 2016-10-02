@@ -231,6 +231,9 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 						list.clear();
 						adapter.notifyDataSetChanged();
 					}
+					if (startLine > loadCountOnce) {
+						startLine -= loadCountOnce;
+					}
 					loadMoreDataEnd();
 					break;
 				default:

@@ -56,6 +56,9 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	private String titleStr;
 	private TextView titleTextView;
 	
+	private String searchCondition = "";
+	private String searchValue = "";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,7 +75,7 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 	}
 
 	private void getData() {
-		HttpUtil.visitMovieInfoTable(want, nextLine+"", nextLine+loadCountOnce-1+"", new HttpCallBackListenerString() {
+		HttpUtil.visitMovieInfoTable(want, nextLine+"", nextLine+loadCountOnce-1+"", searchCondition, searchValue, new HttpCallBackListenerString() {
 			
 			@Override
 			public void onFinish(String response) {
@@ -283,6 +286,9 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 				case Load_Data_Fail:
 					String errorMsg = (String) msg.obj;
 					Util.showToast(MoreMovieActivity.this, errorMsg);
+					if (nextLine > loadCountOnce) {
+						nextLine -= loadCountOnce;
+					}
 					loadMoreDataEnd();
 					break;
 				}
@@ -311,13 +317,16 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
             	//开始请求数据
             	getData();
             }
-        }, 1500);
+        }, 500);
 
 	}
 	
 	private void initData() {
 		Intent intent = getIntent();
 		want = intent.getStringExtra("want");
+		
+		startLine = RecommendFragment.CLASS_COUNT+1;
+		nextLine = startLine;
 		switch (want) {
 		case Data.Recommend:
 			titleStr = "推荐电影";
@@ -331,18 +340,29 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 		case Data.HighMark:
 			titleStr = "高分电影";
 			break;
+		case Data.Search:
+			titleStr = "搜索电影";
+			//搜索电影结果，从第一部开始
+			nextLine = 1;
+			searchCondition =  intent.getStringExtra("searchCondition");
+			searchValue =  intent.getStringExtra("searchValue");
+			break;
 		default:
 			titleStr = "电影";
 			break;
 		}
-		
-		startLine = RecommendFragment.CLASS_COUNT+1;
-		nextLine = startLine;
 	}
 
 	public static void actionStart(Context c, String want) {
 		Intent intent = new Intent(c, MoreMovieActivity.class);
 		intent.putExtra("want", want);
+		c.startActivity(intent);
+	}
+	public static void actionStartSearch(Context c, String want, String searchCondition, String searchValue) {
+		Intent intent = new Intent(c, MoreMovieActivity.class);
+		intent.putExtra("want", want);
+		intent.putExtra("searchCondition", searchCondition);
+		intent.putExtra("searchValue", searchValue);
 		c.startActivity(intent);
 	}
 

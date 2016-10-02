@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -121,15 +122,23 @@ public class HttpUtil {
 		}).start();
 	}
 	
-	public static void visitMovieInfoTable(final String want, final String startLine, final String endLine, final HttpCallBackListenerString listener) {
+	public static void visitMovieInfoTable(final String want, final String startLine, final String endLine, final String searchCondition, final String searchValue, final HttpCallBackListenerString listener) {
 		new Thread(new Runnable() {
 			
 			public void run() {
 				String address = Data.URL_MOVIE_INFO_TABLE+"?want="
 						+want+"&startLine="+startLine+"&endLine="+endLine;
+				if (want.equals(Data.Search)) {
+					try {
+						address += "&searchCondition="+searchCondition+"&searchValue="+URLEncoder.encode(searchValue, Data.ENCODE);
+						Log.d("guohao", "搜索值："+URLEncoder.encode(searchValue, Data.ENCODE));
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}
 				HttpURLConnection connection = HttpUtil.getGetConnection(StringUtil.urlEncode(address, Data.ENCODE));
 				BufferedReader reader = null;
-				Log.d("guohao", "年月日："+address);
+				Log.d("guohao", "请求地址："+address);
 				try {
 					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 						reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
