@@ -131,17 +131,17 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 					if (recommendFragment == null) {
 						recommendFragment = new RecommendFragment();
 					}
-					return new RecommendFragment();
+					return recommendFragment;
 				case 1:
 					if (allFragment == null) {
 						allFragment = new AllFragment();
 					}
-					return new AllFragment();
+					return allFragment;
 				case 2:
 					if (myFragment == null) {
 						myFragment = new MyFragment();
 					}
-					return new MyFragment();
+					return myFragment;
 				}
 				return null;
 			}
