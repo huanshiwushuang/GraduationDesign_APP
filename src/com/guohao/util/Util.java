@@ -159,9 +159,9 @@ public class Util {
         }else{  
             twoTime = System.currentTimeMillis() ;  
             if(message.equals(oldMsg)){  
-                if(twoTime - oneTime > Toast.LENGTH_SHORT){  
-                    toast.show() ;  
-                }  
+            	toast.cancel();
+            	toast = Toast.makeText(context, message, Toast.LENGTH_SHORT); 
+            	toast.show(); 
             }else{  
                 oldMsg = message ;  
                 toast = Toast.makeText(context, message, Toast.LENGTH_SHORT); 
