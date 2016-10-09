@@ -73,7 +73,9 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 	private Boolean thisIsRefresh = false;
 	// 分类---当前选中状态
 	private int languagePosition = 0, typePosition = 0, datePosition = 0, regionPosition = 0, otherPosition = 0;
-
+	//碎片01 和 碎片02 同时完成才能够dismiss
+	public static Boolean isComplete = false;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// 特别注意，不能指定第二个参数。 因为这个 Fragment 会被添加到 ViewPager 里面。
@@ -258,7 +260,10 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 	}
 	protected void loadMoreDataEnd() {
         loadMore.setLoading(false);
-        Util.dismissProgressDialog();
+        AllFragment.isComplete = true;
+        if (RecommendFragment.isComplete) {
+        	Util.dismissProgressDialog();
+		}
 	}
 	private void addDataToList(JSONArray array) {
 		StringBuilder builder = new StringBuilder();

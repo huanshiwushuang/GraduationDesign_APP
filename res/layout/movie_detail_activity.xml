@@ -12,7 +12,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:scrollbarSize="3dp"
+        android:scrollbarThumbVertical="@color/scrollBar" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="3dp"
-                    android:background="#f00"
+                    android:background="#D2E0E0"
                     android:contentDescription="图片"
                     android:scaleType="fitXY" />
 

@@ -13,7 +13,9 @@
             android:id="@+id/id_listview_recommend"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff" >
+            android:background="#fff"
+            android:scrollbarSize="3dp"
+            android:scrollbarThumbVertical="@color/scrollBar" >
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
 

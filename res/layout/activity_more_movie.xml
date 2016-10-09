@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#c1ffff" >
+    android:background="#c1ffff"
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/id_textview_more_title"
@@ -22,7 +22,9 @@
         <ListView
             android:id="@+id/id_listview_more_movie"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:scrollbarSize="3dp"
+            android:scrollbarThumbVertical="@color/scrollBar" >
         </ListView>
     </com.guohao.custom.LoadMore>
 

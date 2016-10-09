@@ -55,6 +55,9 @@ public class RecommendFragment extends Fragment {
 	private List<String> list;
 	private RecommendAdapter adapter;
 	
+	//碎片01 和 碎片02 同时完成才能够dismiss
+	public static Boolean isComplete = false;
+	
 	//标识符---表明网络请求是否完成（当重复多次刷新时候，需要保证在 网络数据 加载到 List 完成以后，才进行下次刷新）
 	private SwipeRefreshLayout refreshLayout;
 	private NetworkInfo info;
@@ -86,10 +89,22 @@ public class RecommendFragment extends Fragment {
 				Util.showToast(getActivity(), error);
 				next();
 				break;
-			default:
-				break;
 			}
-			
+			if (want.equals(Data.HighMark)) {
+				RecommendFragment.isComplete = true;
+				if (AllFragment.isComplete) {
+		        	Util.dismissProgressDialog();
+				}
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						refreshLayout.setRefreshing(false);
+						if (list.size() <= 0) {
+							refreshPrompt.setVisibility(View.VISIBLE);
+						}
+					}
+				}, 700);
+			}
 		}
 		private void setDataInList() {
 			switch (want) {
@@ -160,16 +175,7 @@ public class RecommendFragment extends Fragment {
 				getData(Data.HighMark, startLine, endLine);
 				break;
 			case Data.HighMark:
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						refreshLayout.setRefreshing(false);
-						if (list.size() <= 0) {
-							refreshPrompt.setVisibility(View.VISIBLE);
-						}
-					}
-				}, 700);
-				Util.dismissProgressDialog();
+				
 				break;
 			}
 		}

@@ -146,16 +146,16 @@ public class MyMediaController extends MediaController implements OnCompletionLi
 			@Override
 			public void run() {
 				while (!IsDestroy) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
 					Log.d("heihei", "Õâ¸öIsLoadEnd£º"+IsLoadEnd);
 					if (IsLoadEnd) {
 						int i = (int) videoView.getCurrentPosition();
 						seekBar.setProgress(i);
 						Log.d("heihei", i+"");
+					}
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
 				}
 			}

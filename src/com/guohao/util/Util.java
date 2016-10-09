@@ -2,6 +2,8 @@ package com.guohao.util;
 
 
 
+import com.guohao.custom.MyAlertDialog;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -16,8 +18,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 public class Util {
-	private static ProgressDialog progressDialog;
-	
 	public static boolean isEmpty(String string) {
 		if (string == null || string.equals("")) {
 			return true;
@@ -25,51 +25,25 @@ public class Util {
 		return false;
 	}
 	public static void showProgressDialog(Context context,String msg) {
-		if (progressDialog == null || !progressDialog.equals(context)) {
-			progressDialog = new ProgressDialog(context);
-		}
-		progressDialog.setMessage(msg);
-		progressDialog.setCancelable(false);
-		progressDialog.show();
+		showAlertDialog02(context, msg);
 	}
 	public static void showProgressDialog(Context context) {
-		if (progressDialog == null || !progressDialog.equals(context)) {
-			progressDialog = new ProgressDialog(context);
-		}
-		progressDialog.setMessage("正在加载...");
-		progressDialog.setCancelable(false);
-		progressDialog.show();
+		showAlertDialog02(context, "正在加载数据......");
 	}
 	public static void dismissProgressDialog() {
-		if (progressDialog != null) {
-			progressDialog.dismiss();
+		if (dialog != null) {
+			dialog.dismiss();
 		}
-	}
-	public static ProgressDialog getProgressDialog(Context context) {
-		if (progressDialog == null || !progressDialog.equals(context)) {
-			progressDialog = new ProgressDialog(context);
-		}
-		progressDialog.setCancelable(false);
-		progressDialog.setMessage("正在加载...");
-		return progressDialog;
-	}
-	public static ProgressDialog getProgressDialog(Context context,String msg) {
-		if (progressDialog == null || !progressDialog.equals(context)) {
-			progressDialog = new ProgressDialog(context);
-		}
-		progressDialog.setCancelable(false);
-		progressDialog.setMessage(msg);
-		return progressDialog;
 	}
 	public static Boolean isShowingProgressDialog() {
-		if (progressDialog != null) {
-			return progressDialog.isShowing();
+		if (dialog != null) {
+			return dialog.isShowing();
 		}
 		return false;
 	}
 	public static void setMessage(String msg) {
-		if (progressDialog != null) {
-			progressDialog.setMessage(msg);
+		if (dialog != null) {
+			dialog.setPrompt(msg);
 		}
 	}
 	
@@ -104,13 +78,10 @@ public class Util {
 		activity.getWindowManager().getDefaultDisplay().getMetrics(metric);
 		return metric;
 	}
-	
 	//show Toast
 	public static void showToast(Context c, String msg) {
 		showToastOnce(c, msg);
-//		Toast.makeText(c, msg, Toast.LENGTH_SHORT).show();
 	}
-	
 	//获取 Preferences
 	public static SharedPreferences getPreferences(Context c) {
 		return PreferenceManager.getDefaultSharedPreferences(c);
@@ -152,12 +123,15 @@ public class Util {
      * @param message 
      */  
     public static void showToastOnce(Context context,String message){  
+    	if (context == null) {
+			return;
+		}
         if(toast == null){  
             toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);  
             toast.show() ;  
-            oneTime = System.currentTimeMillis() ;  
+            oneTime = System.currentTimeMillis();
         }else{  
-            twoTime = System.currentTimeMillis() ;  
+            twoTime = System.currentTimeMillis();  
             if(message.equals(oldMsg)){  
             	toast.cancel();
             	toast = Toast.makeText(context, message, Toast.LENGTH_SHORT); 
@@ -168,8 +142,29 @@ public class Util {
                 toast.show();
             }  
         }  
-        oneTime = twoTime ;  
+        oneTime = twoTime;  
     }  
-	
-	
+    
+    public static DisplayMetrics getDisplayMetrics(Activity activity) {
+		DisplayMetrics metrics = new DisplayMetrics();
+		activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		return metrics;
+	}
+	//------------------------------------------------------------
+    
+    public static MyAlertDialog showAlertDialog01(Context context) {
+		MyAlertDialog dialog = new MyAlertDialog(context, MyAlertDialog.Layout01);
+		dialog.show();
+		return dialog;
+	}
+    
+    private static MyAlertDialog dialog;
+    public static MyAlertDialog showAlertDialog02(Context context, String prompt) {
+		dialog = new MyAlertDialog(context, MyAlertDialog.Layout02);
+		int screenHeight = dialog.getScreenHeight();
+		dialog.setPrompt(prompt);
+		dialog.setheight((int)(screenHeight/5.6));
+		dialog.show();
+		return dialog;
+	}
 }

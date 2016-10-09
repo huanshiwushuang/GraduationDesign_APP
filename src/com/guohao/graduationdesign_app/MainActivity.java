@@ -21,12 +21,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.format.Time;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.ciaapp.b.b;
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
 	private ViewPager viewPager;
@@ -175,5 +177,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 	public static void actionStart(Context c) {
 		Intent intent = new Intent(c, MainActivity.class);
 		c.startActivity(intent);
+	}
+	
+	private static Toast t = null;
+	private static long lastTime = 0;
+	private static long thisTime = 0;
+	@Override
+	public void onBackPressed() {
+		thisTime = System.currentTimeMillis();
+		if (t == null) {
+			t = Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT);
+			t.show();
+		}else {
+			thisTime = System.currentTimeMillis();
+			if (lastTime != 0 && (thisTime - lastTime) > 2*1000) {
+				t = Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT);
+				t.show();
+			}else {
+				finish();
+			}
+		}
+		lastTime = thisTime;
 	}
 }

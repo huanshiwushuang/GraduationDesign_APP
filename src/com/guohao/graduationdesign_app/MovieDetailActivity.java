@@ -106,16 +106,13 @@ public class MovieDetailActivity extends Activity {
 			public void handleMessage(final android.os.Message msg) {
 				switch (msg.what) {
 				case HttpUtil.VISIT_MOVIE_INFO_DETAIL_OK:
-					Util.dismissProgressDialog();
 					setOtherData((String) msg.obj);
 					break;
 				case HttpUtil.VISIT_MOVIE_INFO_DETAIL_ERROR:
-					Util.dismissProgressDialog();
 					Util.showToast(MovieDetailActivity.this, (String) msg.obj);
 					break;
-				default:
-					break;
 				}
+				Util.dismissProgressDialog();
 			}
 		};
 	}
@@ -157,7 +154,6 @@ public class MovieDetailActivity extends Activity {
 		} else {
 			Util.showToast(MovieDetailActivity.this, data);
 		}
-		Util.dismissProgressDialog();
 	}
 
 	private void displayPlayTextView(String flag, JSONObject obj) {

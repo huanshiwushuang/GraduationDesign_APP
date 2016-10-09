@@ -131,7 +131,6 @@ public class HttpUtil {
 				if (want.equals(Data.Search)) {
 					try {
 						address += "&searchCondition="+searchCondition+"&searchValue="+URLEncoder.encode(searchValue, Data.ENCODE);
-						Log.d("guohao", "ËÑË÷Öµ£º"+URLEncoder.encode(searchValue, Data.ENCODE));
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}
@@ -214,6 +213,8 @@ public class HttpUtil {
 			connection.setInstanceFollowRedirects(true);
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
+			connection.setConnectTimeout(20*1000);
+			connection.setReadTimeout(20*1000);
 			connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -226,6 +227,8 @@ public class HttpUtil {
 			URL url = new URL(address);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
+			connection.setConnectTimeout(10*1000);
+			connection.setReadTimeout(10*1000);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
