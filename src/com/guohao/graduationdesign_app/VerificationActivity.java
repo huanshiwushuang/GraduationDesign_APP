@@ -4,6 +4,7 @@ package com.guohao.graduationdesign_app;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,6 +45,9 @@ public class VerificationActivity extends Activity implements OnClickListener {
 	private String timeString;
 	private Handler handler;
 	
+	private final int UPDATE_SUCCESS = 2;
+	private final int UPDATE_FAIL = 3;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,19 +72,35 @@ public class VerificationActivity extends Activity implements OnClickListener {
 		
 		handler = new Handler() {
 			public void handleMessage(android.os.Message msg) {
-				JSONObject object;
-				try {
-					object = new JSONObject(String.valueOf(msg.obj));
-					String code = object.getString(Data.KEY_CODE);
-					
-					LoginActivity.actionStart(VerificationActivity.this);
-					if (code.equals(Data.VALUE_OK)) {
-						showToast(object.getString(Data.KEY_DATA)+"，请登录");
-					}else {
-						showToast(object.getString(Data.KEY_DATA));
+				if (flag == REGISTE_ACCOUNT) {
+					JSONObject object;
+					try {
+						object = new JSONObject(String.valueOf(msg.obj));
+						String code = object.getString(Data.KEY_CODE);
+						
+						LoginActivity.actionStart(VerificationActivity.this);
+						if (code.equals(Data.VALUE_OK)) {
+							showToast(object.getString(Data.KEY_DATA)+"，请登录");
+						}else {
+							showToast(object.getString(Data.KEY_DATA));
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				}else if (flag == UPDATE_PWD) {
+					switch (msg.what) {
+					case UPDATE_SUCCESS:
+						Util.dismissProgressDialog();
+						Util.showToast(VerificationActivity.this, "修改成功");
+						finish();
+						break;
+					case UPDATE_FAIL:
+						Util.dismissProgressDialog();
+						Util.showToast(VerificationActivity.this, "修改失败："+msg.obj.toString());
+						finish();
+						break;
+					}
+					finish();
 				}
 			}
 		};
@@ -178,8 +198,6 @@ public class VerificationActivity extends Activity implements OnClickListener {
 					case VerificationActivity.UPDATE_PWD:
 						startUpdatePWD();
 						break;
-					default:
-						break;
 					}
 					break;
 				case CIAService.VERIFICATION_FAIL:
@@ -222,7 +240,45 @@ public class VerificationActivity extends Activity implements OnClickListener {
 	
 	//开始修改密码
 	protected void startUpdatePWD() {
-		
+		UserTable user = new UserTable();
+		user.setUserId(account);
+		user.setUserPwd(pwd);
+		HttpUtil.visitUserTable(HttpUtil.VISIT_USER_TABLE_UPDATE_PWD, Data.URL_USER_TABLE, user, new HttpCallBackListenerString() {
+			@Override
+			public void onFinish(String response) {
+				Message msg = handler.obtainMessage();
+				String code = null;
+				String data = null;
+				try {
+					JSONObject object = new JSONObject(response);
+					code = object.getString(Data.KEY_CODE);
+					data = object.getString(Data.KEY_DATA);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (code.equals(Data.VALUE_OK)) {
+					JSONArray array = null;
+					try {
+						array = new JSONArray(data);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					msg.what = UPDATE_SUCCESS;
+					handler.sendMessage(msg);
+				}else {
+					msg.obj = data.toString();
+					msg.what = UPDATE_FAIL;
+					handler.sendMessage(msg);
+				}
+			}
+			@Override
+			public void onError(String e) {
+				Message msg = handler.obtainMessage();
+				msg.what = UPDATE_FAIL;
+				msg.obj = e;
+				handler.sendMessage(msg);
+			}
+		});
 	}
 	
 	//拨打验证电话

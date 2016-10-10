@@ -52,11 +52,13 @@ public class MyFragment extends Fragment {
 		registeTime.setText("注册时间："+p.getString(Data.K_User_Registe_Time, ""));
 		lastLoginTime.setText("上次登录："+p.getString(Data.K_User_Last_Login_Time, ""));
 		
-		int picSize = p.getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Big);
-		if (picSize == Data.V_Pic_Loading_Small) {
-			picQuality.setText("图片质量：高");
-		}else {
+		switch (p.getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Big)) {
+		case Data.V_Pic_Loading_Small:
 			picQuality.setText("图片质量：低");
+			break;
+		case Data.V_Pic_Loading_Big:
+			picQuality.setText("图片质量：高");
+			break;
 		}
 		switch (p.getInt(Data.K_Video_Quality, Data.V_Video_Quality_High)) {
 		case Data.V_Video_Quality_High:

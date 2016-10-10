@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -37,9 +38,9 @@ public class RegisteActivity extends Activity implements OnClickListener {
 	private Button registeButton;
 	private EditText account,pwd,pwd2;
 	private Handler handler;
-	private Boolean isRegiste = false;
+//	private Boolean isRegiste = false;
 	private final int Registe = 0;
-	private final int Login = 1;
+	private final int Find_Account = 1;
 	
 	private String accountString;
 	private String pwdString;
@@ -64,7 +65,7 @@ public class RegisteActivity extends Activity implements OnClickListener {
 			public void handleMessage(android.os.Message msg) {
 				JSONObject object = null;
 				switch (msg.what) {
-				case Login:
+				case Find_Account:
 					try {
 						object = new JSONObject(String.valueOf(msg.obj));
 						String code = object.getString(Data.KEY_CODE);
@@ -101,8 +102,6 @@ public class RegisteActivity extends Activity implements OnClickListener {
 						Util.showToast(RegisteActivity.this, e.toString());
 					}
 					break;
-				default:
-					break;
 				}
 			}
 		};
@@ -115,8 +114,6 @@ public class RegisteActivity extends Activity implements OnClickListener {
 			pwdString = pwd.getText().toString();
 			pwd2String = pwd2.getText().toString();
 			registe();
-			break;
-		default:
 			break;
 		}
 	}
@@ -153,14 +150,12 @@ public class RegisteActivity extends Activity implements OnClickListener {
 	private void selectAccount(final String account, final String pwd) {
 		UserTable user = new UserTable();
 		user.setUserId(account);
-		user.setUsername(System.nanoTime()+"");
-		user.setUserPwd(pwd);
-		HttpUtil.visitUserTable(HttpUtil.VISIT_USER_TABLE_LOGIN, Data.URL_USER_TABLE, user, new HttpCallBackListenerString() {
+		HttpUtil.visitUserTable(HttpUtil.VISIT_USER_TABLE_FIND_ACCOUNT, Data.URL_USER_TABLE, user, new HttpCallBackListenerString() {
 			@Override
 			public void onFinish(String response) {
 				Message msg = handler.obtainMessage();
 				msg.obj = response;
-				msg.what = Login;
+				msg.what = Find_Account;
 				handler.sendMessage(msg);
 			}
 			@Override

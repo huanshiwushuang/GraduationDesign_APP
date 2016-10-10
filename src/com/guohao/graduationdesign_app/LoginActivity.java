@@ -58,6 +58,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 		
 		login = (Button) findViewById(R.id.id_button_login);
 		login.setOnClickListener(this);
+		
+		forgetPWD = (TextView) findViewById(R.id.id_textview_forget_pwd);
+		forgetPWD.setOnClickListener(this);
 	}
 
 	public void onClick(View v) {
@@ -71,7 +74,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 			}
 			login();
 			break;
-		default:
+		case R.id.id_textview_forget_pwd:
+			ForgetPwd.actionStart(LoginActivity.this);
 			break;
 		}
 	}

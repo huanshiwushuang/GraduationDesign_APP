@@ -384,7 +384,7 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 			if (info == null || !info.isAvailable()) {
 				return;
 			}
-			int i = Util.getPreferences(getActivity()).getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Small);
+			int i = Util.getPreferences(getActivity()).getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Big);
 			if (i == Data.V_Pic_Loading_Big) {
 				picLink = Util.getBigImageAddress(picLink);
 			}

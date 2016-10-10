@@ -26,6 +26,7 @@ public class HttpUtil {
 	public static final int VISIT_USER_TABLE_REGISTE = 1;
 	public static final int VISIT_USER_TABLE_UPDATE_USERNAME = 2;
 	public static final int VISIT_USER_TABLE_UPDATE_PWD = 3;
+	public static final int VISIT_USER_TABLE_FIND_ACCOUNT = 6;
 
 	public static final int VISIT_MOVIE_INFO_DETAIL_OK = 4;
 	public static final int VISIT_MOVIE_INFO_DETAIL_ERROR = 5;
@@ -97,6 +98,9 @@ public class HttpUtil {
 						break;
 					case HttpUtil.VISIT_USER_TABLE_UPDATE_PWD:
 						content = "want=update_pwd&userId=" + URLEncoder.encode(user.getUserId(), Data.ENCODE) + "&pwd="+ URLEncoder.encode(user.getUserPwd(), Data.ENCODE);
+						break;
+					case HttpUtil.VISIT_USER_TABLE_FIND_ACCOUNT:
+						content = "want=find_account&userId="+URLEncoder.encode(user.getUserId(), Data.ENCODE);
 						break;
 					}
 					
