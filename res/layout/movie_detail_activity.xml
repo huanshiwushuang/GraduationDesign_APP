@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="3dp"
-                    android:background="#D2E0E0"
+                    android:background="#999"
                     android:contentDescription="图片"
                     android:scaleType="fitXY" />
 
@@ -58,11 +58,17 @@
                             android:layout_gravity="right"
                             android:text="@string/movie_name" />
 
-                        <TextView
-                            android:id="@+id/id_textview_movie_name"
+                        <HorizontalScrollView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="true" />
+                            android:scrollbars="none" >
+
+                            <TextView
+                                android:id="@+id/id_textview_movie_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:singleLine="true" />
+                        </HorizontalScrollView>
                     </LinearLayout>
 
                     <LinearLayout
@@ -76,10 +82,16 @@
                             android:layout_gravity="right"
                             android:text="@string/movie_type" />
 
-                        <TextView
-                            android:id="@+id/id_textview_movie_type"
+                        <HorizontalScrollView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none" >
+
+                            <TextView
+                                android:id="@+id/id_textview_movie_type"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </HorizontalScrollView>
                     </LinearLayout>
 
                     <LinearLayout
@@ -93,10 +105,16 @@
                             android:layout_gravity="right"
                             android:text="@string/movie_region" />
 
-                        <TextView
-                            android:id="@+id/id_textview_movie_region"
+                        <HorizontalScrollView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none" >
+
+                            <TextView
+                                android:id="@+id/id_textview_movie_region"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </HorizontalScrollView>
                     </LinearLayout>
 
                     <LinearLayout
@@ -110,12 +128,18 @@
                             android:layout_gravity="right"
                             android:text="@string/movie_language" />
 
-                        <TextView
-                            android:id="@+id/id_textview_movie_language"
+                        <HorizontalScrollView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:ellipsize="marquee"
-                            android:singleLine="true" />
+                            android:scrollbars="none" >
+
+                            <TextView
+                                android:id="@+id/id_textview_movie_language"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="marquee"
+                                android:singleLine="true" />
+                        </HorizontalScrollView>
                     </LinearLayout>
 
                     <LinearLayout
@@ -129,10 +153,16 @@
                             android:layout_gravity="right"
                             android:text="@string/movie_release_date" />
 
-                        <TextView
-                            android:id="@+id/id_textview_movie_release_date"
+                        <HorizontalScrollView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none" >
+
+                            <TextView
+                                android:id="@+id/id_textview_movie_release_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </HorizontalScrollView>
                     </LinearLayout>
 
                     <LinearLayout
@@ -146,10 +176,16 @@
                             android:layout_gravity="right"
                             android:text="@string/movie_time" />
 
-                        <TextView
-                            android:id="@+id/id_textview_movie_time"
+                        <HorizontalScrollView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none" >
+
+                            <TextView
+                                android:id="@+id/id_textview_movie_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </HorizontalScrollView>
                     </LinearLayout>
 
                     <LinearLayout

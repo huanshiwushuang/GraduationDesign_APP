@@ -3,15 +3,30 @@ package com.guohao.custom;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.guohao.graduationdesign_app.LoginActivity;
 import com.guohao.graduationdesign_app.MoreMovieActivity;
 import com.guohao.graduationdesign_app.R;
+import com.guohao.inter.HttpCallBackListenerString;
+import com.guohao.model.UserTable;
 import com.guohao.util.Data;
+import com.guohao.util.HttpUtil;
 import com.guohao.util.Util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +67,19 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 	//---布局02---正在加载
 	public final static int Layout02 = 3;
 	private ImageView rotateImg;
-	private TextView showText;
+	private TextView title;
+	//---布局03---更新用户信息
+	public final static int Layout03 = 4;
+	private Handler handler;
+	private static final int UPDATE_SUCCESS = 5;
+	private static final int UPDATE_FAIL = 6;
+	private int flag; 
+	private MyAlertDialog myAlertDialog;
+	private String updateString;
+	//---布局04---注销
+	public final static int Layout04 = 7;
+	private TextView content;
+	
 	
 	//当前布局
 	private static int currentLayout = Layout01;
@@ -60,14 +87,19 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 	
 	//---构造函数---布局01
 	public MyAlertDialog(Context context, int layout) {
+		this(context, layout, -999);
+	}
+	//---构造函数---布局03
+	public MyAlertDialog(Context context, int layout, int updateFlag) {
 		mContext = context;
 		
 		currentLayout = layout;
 		initView();
 		initData();
 		initListener();
+		
+		flag = updateFlag;
 	}
-	
 	
 	private void initListener() {
 		switch (currentLayout) {
@@ -78,6 +110,14 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 			adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_single_choice, list);
 			spinner.setAdapter(adapter);
 			spinner.setOnItemSelectedListener(this);
+			break;
+		case Layout03:
+			mYes.setOnClickListener(this);
+			mNo.setOnClickListener(this);
+			break;
+		case Layout04:
+			mYes.setOnClickListener(this);
+			mNo.setOnClickListener(this);
 			break;
 		}
 	}
@@ -121,7 +161,37 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 		case Layout02:
 			v = inflater.inflate(R.layout.custom_alertdialog_loading, new FrameLayout(mContext));
 			rotateImg = (ImageView) v.findViewById(R.id.id_imageview_rotate);
-			showText = (TextView) v.findViewById(R.id.id_textview_prompt);
+			title = (TextView) v.findViewById(R.id.id_textview_prompt);
+			break;
+		case Layout03:
+			v = inflater.inflate(R.layout.custom_alertdialog_update_info, new FrameLayout(mContext));
+			title = (TextView) v.findViewById(R.id.id_textview_title);
+			inputEdit = (EditText) v.findViewById(R.id.id_edittext_update);
+			mYes = (TextView) v.findViewById(R.id.id_textview_yes);
+			mNo = (TextView) v.findViewById(R.id.id_textview_no);
+			handler = new Handler() {
+				public void handleMessage(android.os.Message msg) {
+					switch (msg.what) {
+					case UPDATE_SUCCESS:
+						Util.showToast(mContext, "修改成功");
+						MyBg myBg = (MyBg) ((Activity)mContext).findViewById(R.id.id_mybg_username);
+						myBg.setText("用户昵称："+updateString);
+						break;
+					case UPDATE_FAIL:
+						Util.showToast(mContext, "修改失败："+msg.obj.toString());
+						break;
+					}
+					
+					myAlertDialog.dismiss();
+				}
+			};
+			break;
+		case Layout04:
+			v = inflater.inflate(R.layout.custom_alertdialog_exit, new FrameLayout(mContext));
+			title = (TextView) v.findViewById(R.id.id_textview_title);
+			content = (TextView) v.findViewById(R.id.id_textview_message);
+			mYes = (TextView) v.findViewById(R.id.id_textview_yes);
+			mNo = (TextView) v.findViewById(R.id.id_textview_no);
 			break;
 		}
 	}
@@ -140,8 +210,8 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 	}
 	//---布局02----
 	public void setPrompt(String prompt) {
-		if (showText != null) {
-			showText.setText(prompt);
+		if (title != null) {
+			title.setText(prompt);
 		}
 	}
 	public void setWidth(int width) {
@@ -149,6 +219,23 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 	}
 	public void setheight(int height) {
 		this.height = height; 
+	}
+	//---布局03---
+	public void setTitle(String text) {
+		if (title != null) {
+			title.setText(text);
+		}
+	}
+	public void setHint(String hint) {
+		if (inputEdit != null) {
+			inputEdit.setHint(hint);
+		}
+	}
+	//---布局04---
+	public void setContent(String text) {
+		if (content != null) {
+			content.setText(text);
+		}
 	}
 	//---getter---
 	public int getScreenWidth() {
@@ -179,21 +266,102 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 	
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.id_button_search:
-			spinner.performClick();
-			break;
-		case R.id.id_textview_yes:
-			if (inputEdit.getText().toString().equals("")) {
-				Util.showToast(mContext, "不能为空");
-			}else {
-				MoreMovieActivity.actionStartSearch(mContext, Data.Search, currentPosition+"", inputEdit.getText().toString());
+		if (currentLayout == Layout01) {
+			switch (v.getId()) {
+			case R.id.id_button_search:
+				spinner.performClick();
+				break;
+			case R.id.id_textview_yes:
+				if (inputEdit.getText().toString().equals("")) {
+					Util.showToast(mContext, "不能为空");
+				}else {
+					MoreMovieActivity.actionStartSearch(mContext, Data.Search, currentPosition+"", inputEdit.getText().toString());
+					dismiss();
+				}
+				break;
+			case R.id.id_textview_no:
 				dismiss();
+				break;
 			}
-			break;
-		case R.id.id_textview_no:
-			dismiss();
-			break;
+		}else if (currentLayout == Layout03) {
+			switch (v.getId()) {
+			case R.id.id_textview_yes:
+				dismiss();
+				myAlertDialog = Util.showAlertDialog02(mContext, "正在更新......");
+				updateString = inputEdit.getText().toString().trim();
+				if (updateString.equals("")) {
+					Util.showToast(mContext, "不能为空");
+				}else {
+					SharedPreferences p = Util.getPreferences(mContext);
+					UserTable user = new UserTable();
+					user.setUserId(p.getString(Data.K_User_Id, ""));
+					switch (flag) {
+					case HttpUtil.VISIT_USER_TABLE_UPDATE_USERNAME:
+						user.setUsername(updateString);
+						break;
+					case HttpUtil.VISIT_USER_TABLE_UPDATE_PWD:
+						user.setUserPwd(updateString);
+						break;
+					}
+					
+					HttpUtil.visitUserTable(flag, Data.URL_USER_TABLE, user, new HttpCallBackListenerString() {
+						@Override
+						public void onFinish(String response) {
+							Message msg = handler.obtainMessage();
+							String code = null;
+							String data = null;
+							try {
+								JSONObject object = new JSONObject(response);
+								code = object.getString(Data.KEY_CODE);
+								data = object.getString(Data.KEY_DATA);
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+							if (code.equals(Data.VALUE_OK)) {
+								JSONArray array = null;
+								try {
+									array = new JSONArray(data);
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+								msg.what = UPDATE_SUCCESS;
+								handler.sendMessage(msg);
+							}else {
+								msg.obj = data.toString();
+								msg.what = UPDATE_FAIL;
+								handler.sendMessage(msg);
+							}
+						}
+						@Override
+						public void onError(String e) {
+							Message msg = handler.obtainMessage();
+							msg.what = UPDATE_FAIL;
+							msg.obj = e;
+							handler.sendMessage(msg);
+						}
+					});
+				}
+				break;
+			case R.id.id_textview_no:
+				dismiss();
+				break;
+			}
+		}else if (currentLayout == Layout04) {
+			switch (v.getId()) {
+			case R.id.id_textview_yes:
+				dismiss();
+				//清除数据，重新登录
+				Editor editor = Util.getPreferences(mContext).edit();
+				editor.clear();
+				editor.commit();
+				
+				LoginActivity.actionStart(mContext);
+				((Activity)mContext).finish();
+				break;
+			case R.id.id_textview_no:
+				dismiss();
+				break;
+			}
 		}
 	}
 	@Override

@@ -17,7 +17,8 @@
     <string name="verification_btn_text">Next</string>
     <string name="all_time">30s</string>
     
-    <string name="change_text">修改</string> 
+    <string name="change_text">修改</string>
+    <string name="exit">注销</string> 
     
     
     <string name="movie_name">名&#8194;字：</string>

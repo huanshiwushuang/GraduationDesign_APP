@@ -11,9 +11,9 @@ public class Data {
 	public static final String URL_MOVIE_INFO_TABLE = "http://115.159.111.179/movieInfo.gh";
 	public static final String URL_MOVIE_PLAY_URL = "http://115.159.111.179/moviePlay.gh";
 	
-//	public static final String URL_USER_TABLE = "http://192.168.0.101:8080/GraduationDesign/user.gh";
-//	public static final String URL_MOVIE_INFO_TABLE = "http://192.168.0.101:8080/GraduationDesign/movieInfo.gh";
-//	public static final String URL_MOVIE_PLAY_URL = "http://192.168.0.101:8080/GraduationDesign/moviePlay.gh";
+//	public static final String URL_USER_TABLE = "http://192.168.0.104:8080/GraduationDesign/user.gh";
+//	public static final String URL_MOVIE_INFO_TABLE = "http://192.168.0.104:8080/GraduationDesign/movieInfo.gh";
+//	public static final String URL_MOVIE_PLAY_URL = "http://192.168.0.104:8080/GraduationDesign/moviePlay.gh";
 	
 	public static final String ENCODE = "UTF-8";
 	
@@ -44,6 +44,12 @@ public class Data {
 	public static final String K_User_Name = "5";
 	//---用户上次登录account
 	public static final String K_User_Last_Login_Account = "6";
+	public static final String K_User_Pwd = "9";
+	
+	//---用户注册时间
+	public static final String K_User_Registe_Time = "7";
+	//---用户上次登录时间
+	public static final String K_User_Last_Login_Time = "8";
 	
 	//保存图片的宽度和高度
 	public static final String K_IMAGE_WIDTH = "image_width";

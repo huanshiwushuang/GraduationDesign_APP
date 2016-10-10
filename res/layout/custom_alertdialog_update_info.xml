@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/custom_shape_alertdialog_bg"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/id_textview_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="修改"
+        android:textSize="17sp" />
+
+    <EditText
+        android:id="@+id/id_edittext_update"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/custom_shape_exittext_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginTop="20dp"
+        android:hint="提示信息"
+        android:inputType="text"
+        android:paddingLeft="5dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true" >
+
+            <TextView
+                android:id="@+id/id_textview_yes"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/custom_selector_alertdialog_ok_bg"
+                android:gravity="center"
+                android:text="确定"
+                android:textColor="#4FB7AD" />
+
+            <TextView
+                android:id="@+id/id_textview_no"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/id_textview_yes"
+                android:background="@drawable/custom_selector_alertdialog_ok_bg"
+                android:gravity="center"
+                android:text="取消"
+                android:textColor="#4FB7AD" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

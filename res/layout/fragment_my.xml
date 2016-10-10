@@ -7,73 +7,107 @@
     android:orientation="vertical" >
 
     <com.guohao.custom.MyBg
+        android:id="@+id/id_mybg_user_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        MyBg:image="@drawable/user_id"
         MyBg:text01="用户ID："
         MyBg:text02="" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
-        android:background="#fff" />
+        android:background="#2BB6F6" />
 
     <com.guohao.custom.MyBg
         android:id="@+id/id_mybg_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        MyBg:image="@drawable/username"
         MyBg:text01="用户昵称："
         MyBg:text02="@string/change_text" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
-        android:background="#fff" />
+        android:background="#2BB6F6" />
 
     <com.guohao.custom.MyBg
+        android:id="@+id/id_mybg_user_registe_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        MyBg:image="@drawable/registe_time"
         MyBg:text01="注册时间："
         MyBg:text02="" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
-        android:background="#fff" />
+        android:background="#2BB6F6" />
+
+    <com.guohao.custom.MyBg
+        android:id="@+id/id_mybg_user_last_login_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        MyBg:image="@drawable/registe_time"
+        MyBg:text01="上次登录："
+        MyBg:text02="" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#2BB6F6" />
 
     <com.guohao.custom.MyBg
         android:id="@+id/id_mybg_user_pwd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        MyBg:text01="用户密码：登录时，通过忘记密码修改"
+        MyBg:image="@drawable/pwd"
+        MyBg:text01="用户密码"
         MyBg:text02="@string/change_text" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
-        android:background="#fff" />
+        android:background="#2BB6F6" />
 
     <com.guohao.custom.MyBg
         android:id="@+id/id_mybg_load_pic_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        MyBg:text01="图片大小：大"
+        MyBg:image="@drawable/pic_size"
+        MyBg:text01="图片质量：高"
         MyBg:text02="@string/change_text" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
-        android:background="#fff" />
+        android:background="#2BB6F6" />
 
     <com.guohao.custom.MyBg
         android:id="@+id/id_mybg_play_quality"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        MyBg:text01="播放质量："
+        MyBg:image="@drawable/video_quality"
+        MyBg:text01="视频质量："
         MyBg:text02="@string/change_text" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
-        android:background="#fff" />
+        android:background="#2BB6F6" />
+
+    <com.guohao.custom.MyBg
+        android:id="@+id/id_mybg_exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        MyBg:image="@drawable/exit"
+        MyBg:text01="当前状态：已登录"
+        MyBg:text02="@string/exit" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#2BB6F6" />
 
 </LinearLayout>

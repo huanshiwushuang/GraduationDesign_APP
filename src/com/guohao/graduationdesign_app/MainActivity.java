@@ -4,6 +4,7 @@ package com.guohao.graduationdesign_app;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guohao.custom.MyBg;
 import com.guohao.fragment.AllFragment;
 import com.guohao.fragment.MyFragment;
 import com.guohao.fragment.RecommendFragment;
@@ -173,7 +174,12 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 			}
 		});
 	}
-	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		//静态变量，需恢复初始值
+		MyBg.TAG = 0;
+	}
 	public static void actionStart(Context c) {
 		Intent intent = new Intent(c, MainActivity.class);
 		c.startActivity(intent);

@@ -151,19 +151,31 @@ public class Util {
 		return metrics;
 	}
 	//------------------------------------------------------------
-    
+    private static MyAlertDialog dialog;
     public static MyAlertDialog showAlertDialog01(Context context) {
-		MyAlertDialog dialog = new MyAlertDialog(context, MyAlertDialog.Layout01);
+		dialog = new MyAlertDialog(context, MyAlertDialog.Layout01);
 		dialog.show();
 		return dialog;
 	}
-    
-    private static MyAlertDialog dialog;
     public static MyAlertDialog showAlertDialog02(Context context, String prompt) {
 		dialog = new MyAlertDialog(context, MyAlertDialog.Layout02);
 		int screenHeight = dialog.getScreenHeight();
 		dialog.setPrompt(prompt);
 		dialog.setheight((int)(screenHeight/5.6));
+		dialog.show();
+		return dialog;
+	}
+    public static MyAlertDialog showAlertDialog03(Context context, String prompt, String hint, int updateFlag) {
+		dialog = new MyAlertDialog(context, MyAlertDialog.Layout03, updateFlag);
+		dialog.setPrompt(prompt);
+		dialog.setHint(hint);
+		dialog.show();
+		return dialog;
+	}
+    public static MyAlertDialog showAlertDialog04(Context context, String title, String content) {
+		dialog = new MyAlertDialog(context, MyAlertDialog.Layout04);
+		dialog.setTitle(title);
+		dialog.setContent(content);
 		dialog.show();
 		return dialog;
 	}

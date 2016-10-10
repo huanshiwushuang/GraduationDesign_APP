@@ -96,7 +96,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 			return;
 		}
 		final String accountString = account.getText().toString();
-		String pwdString = pwd.getText().toString();
+		final String pwdString = pwd.getText().toString();
 		UserTable user = new UserTable();
 		user.setUserId(accountString);
 		user.setUserPwd(pwdString);
@@ -119,6 +119,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 						editor.putString(Data.K_User_Last_Login_Account, accountString);
 						editor.putString(Data.K_User_Id, obj.getString("userId"));
 						editor.putString(Data.K_User_Name, obj.getString("username"));
+						String temp = obj.getString("userRegisteTime");
+						editor.putString(Data.K_User_Registe_Time, temp == null?"":temp.substring(0, temp.length()-4));
+						temp = obj.getString("userLastOnlineTime");
+						editor.putString(Data.K_User_Last_Login_Time, temp == null?"":temp.substring(0, temp.length()-4));
+						editor.putString(Data.K_User_Pwd, pwdString);
 						editor.commit();
 						
 						MainActivity.actionStart(LoginActivity.this);
