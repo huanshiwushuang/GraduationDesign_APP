@@ -52,8 +52,8 @@ public class MyFragment extends Fragment {
 		registeTime.setText("注册时间："+p.getString(Data.K_User_Registe_Time, ""));
 		lastLoginTime.setText("上次登录："+p.getString(Data.K_User_Last_Login_Time, ""));
 		
-		int picSize = p.getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Small);
-		if (picSize == Data.V_Pic_Loading_Big) {
+		int picSize = p.getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Big);
+		if (picSize == Data.V_Pic_Loading_Small) {
 			picQuality.setText("图片质量：高");
 		}else {
 			picQuality.setText("图片质量：低");

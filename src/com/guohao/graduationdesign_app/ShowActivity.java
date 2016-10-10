@@ -118,7 +118,6 @@ public class ShowActivity extends Activity {
 				if (Util.isEmpty(lastIntoTime)) {
 					LoginActivity.actionStart(ShowActivity.this);
 					finish();
-					
 				}else if ((System.currentTimeMillis()-Long.valueOf(lastIntoTime))/1000.0/60.0/60.0 > 3*24) {
 					//如果此时登录时间距离上次大于了3天，请重新登录。
 					LoginActivity.actionStart(ShowActivity.this);

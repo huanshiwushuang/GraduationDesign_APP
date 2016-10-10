@@ -23,6 +23,7 @@
         android:focusable="true"
         android:layout_marginTop="20dp"
         android:hint="提示信息"
+        android:maxLength="20"
         android:inputType="text"
         android:paddingLeft="5dp" />
 

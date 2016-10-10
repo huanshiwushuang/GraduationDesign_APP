@@ -12,6 +12,7 @@ import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
@@ -169,6 +170,9 @@ public class Util {
 		dialog = new MyAlertDialog(context, MyAlertDialog.Layout03, updateFlag);
 		dialog.setPrompt(prompt);
 		dialog.setHint(hint);
+		if (updateFlag == HttpUtil.VISIT_USER_TABLE_UPDATE_PWD) {
+			dialog.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		}
 		dialog.show();
 		return dialog;
 	}

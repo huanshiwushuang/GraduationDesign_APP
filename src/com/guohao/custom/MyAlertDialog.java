@@ -27,6 +27,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,9 +81,8 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 	public final static int Layout04 = 7;
 	private TextView content;
 	
-	
 	//当前布局
-	private static int currentLayout = Layout01;
+	private static int currentLayout;
 	
 	
 	//---构造函数---布局01
@@ -231,6 +231,11 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 			inputEdit.setHint(hint);
 		}
 	}
+	public void setInputType(int type) {
+		if (inputEdit != null) {
+			inputEdit.setInputType(type);
+		}
+	}
 	//---布局04---
 	public void setContent(String text) {
 		if (content != null) {
@@ -284,6 +289,7 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 				break;
 			}
 		}else if (currentLayout == Layout03) {
+			
 			switch (v.getId()) {
 			case R.id.id_textview_yes:
 				dismiss();
