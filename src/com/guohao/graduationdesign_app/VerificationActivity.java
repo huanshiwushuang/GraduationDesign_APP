@@ -31,7 +31,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class VerificationActivity extends Activity implements OnClickListener {
 	public static final int REGISTE_ACCOUNT = 0;
@@ -80,9 +79,9 @@ public class VerificationActivity extends Activity implements OnClickListener {
 						
 						LoginActivity.actionStart(VerificationActivity.this);
 						if (code.equals(Data.VALUE_OK)) {
-							showToast(object.getString(Data.KEY_DATA)+"，请登录");
+							Util.showToast(VerificationActivity.this,object.getString(Data.KEY_DATA)+"，请登录");
 						}else {
-							showToast(object.getString(Data.KEY_DATA));
+							Util.showToast(VerificationActivity.this,object.getString(Data.KEY_DATA));
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -163,7 +162,7 @@ public class VerificationActivity extends Activity implements OnClickListener {
 			verifySecurityCode();
 			break;
 		case R.id.id_button_time:
-			showToast("等待验证电话送达");
+			Util.showToast(VerificationActivity.this,"等待验证电话送达");
 			callPhone(account);
 			reVerification();
 			break;
@@ -177,7 +176,7 @@ public class VerificationActivity extends Activity implements OnClickListener {
 		String code = verificationCode.getText().toString();
 		Matcher matcher = Pattern.compile("\\d{4}").matcher(code);
 		if (!matcher.find()) {
-			showToast("验证码有误");
+			Util.showToast(VerificationActivity.this,"验证码有误");
 			return;
 		}
 		
@@ -188,7 +187,7 @@ public class VerificationActivity extends Activity implements OnClickListener {
 				switch (status) {
 				case CIAService.VERIFICATION_SUCCESS:
 					Util.dismissProgressDialog();
-					showToast("验证成功");
+					Util.showToast(VerificationActivity.this,"验证成功");
 					
 					//根据flag，判断是注册 还是 修改密码
 					switch (flag) {
@@ -202,10 +201,10 @@ public class VerificationActivity extends Activity implements OnClickListener {
 					break;
 				case CIAService.VERIFICATION_FAIL:
 					Util.dismissProgressDialog();
-					showToast("验证失败："+msg);
+					Util.showToast(VerificationActivity.this,"验证失败："+msg);
 				default:
 					Util.dismissProgressDialog();
-					showToast("Error："+msg);
+					Util.showToast(VerificationActivity.this,"Error："+msg);
 					break;
 				}
 			}
@@ -232,7 +231,7 @@ public class VerificationActivity extends Activity implements OnClickListener {
 				Util.dismissProgressDialog();
 				Looper.prepare();
 				LoginActivity.actionStart(VerificationActivity.this);
-				showToast(e);
+				Util.showToast(VerificationActivity.this,e);
 				Looper.loop();
 			}
 		});
@@ -289,17 +288,17 @@ public class VerificationActivity extends Activity implements OnClickListener {
                 switch (status) {
                     case CIAService.SECURITY_CODE_MODE: // 验证码模式
                         // 进入输入验证码的页面，并提示用户输入验证码
-                    	showToast("已拨打验证电话至："+phoneNumber);
+                    	Util.showToast(VerificationActivity.this,"已拨打验证电话至："+phoneNumber);
                         break;
                     case CIAService.VERIFICATION_FAIL:
-                        showToast("验证失败：" + msg);
+                        Util.showToast(VerificationActivity.this,"验证失败：" + msg);
                         break;
                     case CIAService.REQUEST_EXCEPTION:
-                        showToast("请求异常：" + msg);
+                        Util.showToast(VerificationActivity.this,"请求异常：" + msg);
                         break;
                     default:
                         // 服务器返回的错误
-                        showToast(msg);
+                        Util.showToast(VerificationActivity.this,msg);
                 }
             }
         });
@@ -311,10 +310,6 @@ public class VerificationActivity extends Activity implements OnClickListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		CIAService.cancelVerification();
-	}
-
-	private void showToast(String msg) {
-		Toast.makeText(VerificationActivity.this, msg, Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
