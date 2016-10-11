@@ -23,3 +23,6 @@
 -keep class cn.ciaapp.**{
 *;
 }
+
+-keep class io.vov.utils.** { *; }
+-keep class io.vov.vitamio.** { *; }
