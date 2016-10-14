@@ -181,7 +181,7 @@ public class AllFragment extends Fragment implements OnClickListener,OnLoadListe
 				"2006", "2005", "2004及以前" };
 		region = new String[] { "全部", "大陆", "香港", "台湾", "美国", "法国", "英国", "日本", "韩国", "德国", "泰国", "印度", "意大利", "西班牙",
 				"加拿大", "其他" };
-		other = new String[] { "最新", "热门", "好评", "可播放" };
+		other = new String[] { "最新", "热门", "好评", "可播放640P","可播放1024P" };
 		// --
 		languageTextView = new TextView[language.length];
 		typeTextView = new TextView[type.length];
