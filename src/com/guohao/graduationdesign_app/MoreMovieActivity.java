@@ -184,7 +184,7 @@ public class MoreMovieActivity extends Activity implements OnLoadListener {
 			if (info == null || !info.isAvailable()) {
 				return;
 			}
-			int i = Util.getPreferences(mActivity).getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Small);
+			int i = Util.getPreferences(mActivity).getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Big);
 			if (i == Data.V_Pic_Loading_Big) {
 				picLink = Util.getBigImageAddress(picLink);
 			}

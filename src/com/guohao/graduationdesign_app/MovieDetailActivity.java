@@ -57,7 +57,7 @@ public class MovieDetailActivity extends Activity {
 		params.width = picWidth;
 		params.height = (int) (picWidth / 3.0 * 4.0);
 
-		int i = Util.getPreferences(MovieDetailActivity.this).getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Small);
+		int i = Util.getPreferences(MovieDetailActivity.this).getInt(Data.K_Pic_Loading, Data.V_Pic_Loading_Big);
 		if (i == Data.V_Pic_Loading_Big) {
 			picLink = Util.getBigImageAddress(picLink);
 		}
