@@ -168,20 +168,20 @@ public class MoviePlayActivity extends Activity {
 	}
 	@Override
 	protected void onResume() {
+		super.onResume();
 		if (!controller.isLoading()) {
 			controller.play();
 		}
-		super.onResume();
 	}
 	@Override
 	protected void onPause() {
-		controller.pause();
 		super.onPause();
+		controller.pause();
 	}
 	@Override
 	protected void onStop() {
-		controller.pause();
 		super.onStop();
+		controller.pause();
 	}
 	@Override
 	protected void onDestroy() {

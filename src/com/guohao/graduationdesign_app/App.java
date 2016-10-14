@@ -62,7 +62,7 @@ public class App extends Application {
 		config.diskCacheSize(50*1024*1024);
 		config.diskCache(new UnlimitedDiskCache(cacheDir));
 		config.tasksProcessingOrder(QueueProcessingType.LIFO);
-		config.writeDebugLogs(); // 如果 APP 上市，就移除它，这是打印日志的
+//		config.writeDebugLogs(); // 如果 APP 上市，就移除它，这是打印日志的
 		config.defaultDisplayImageOptions(options);
 		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config.build());
