@@ -293,11 +293,12 @@ public class MyAlertDialog implements OnClickListener,OnItemClickListener,OnItem
 			switch (v.getId()) {
 			case R.id.id_textview_yes:
 				dismiss();
-				myAlertDialog = Util.showAlertDialog02(mContext, "正在更新......");
 				updateString = inputEdit.getText().toString().trim();
 				if (updateString.equals("")) {
 					Util.showToast(mContext, "不能为空");
 				}else {
+					myAlertDialog = Util.showAlertDialog02(mContext, "正在更新......");
+					
 					SharedPreferences p = Util.getPreferences(mContext);
 					UserTable user = new UserTable();
 					user.setUserId(p.getString(Data.K_User_Id, ""));
