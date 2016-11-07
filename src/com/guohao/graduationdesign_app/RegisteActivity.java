@@ -187,7 +187,6 @@ public class RegisteActivity extends Activity implements OnClickListener {
                     	Util.dismissProgressDialog();
                     	VerificationActivity.actionStart(RegisteActivity.this, phoneNumber, pwd, VerificationActivity.REGISTE_ACCOUNT);
                     	Util.showToast(RegisteActivity.this, "已拨打验证电话至："+phoneNumber);
-                    	finish();
                         break;
                     case CIAService.VERIFICATION_FAIL:
                     	Util.dismissProgressDialog();
@@ -236,11 +235,6 @@ public class RegisteActivity extends Activity implements OnClickListener {
 		context.startActivity(intent);
 	}
 	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		CIAService.cancelVerification();
-	}
 	private Boolean haveNetWork() {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 		NetworkInfo info = connectivityManager.getActiveNetworkInfo();
